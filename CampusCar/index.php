@@ -7,6 +7,7 @@ session_start();
 // 2. On inclut les Contrôleurs dont on va avoir besoin
 require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/ProfileController.php';
 
 // 3. On récupère l'action demandée dans l'URL (ex: index.php?action=login)
 // Si aucune action n'est précisée, on définit 'accueil' par défaut
@@ -51,7 +52,17 @@ switch ($action) {
         $controller = new AuthController();
         $controller->doRegister();
         break;
+    
+    // --- ROUTES PROFIL / CONDUCTEUR ---
+    case 'devenir_conducteur':
+        $controller = new ProfileController();
+        $controller->showDevenirConducteur();
+        break;
 
+    case 'process_devenir_conducteur':
+        $controller = new ProfileController();
+        $controller->processDevenirConducteur();
+        break;
     // --- PAGE INTROUVABLE (Erreur 404) ---
     default:
         // Si l'utilisateur tape une action qui n'existe pas
