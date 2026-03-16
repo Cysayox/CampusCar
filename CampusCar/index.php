@@ -54,6 +54,11 @@ switch ($action) {
         break;
     
     // --- ROUTES PROFIL / CONDUCTEUR ---
+    case 'profil':
+        $controller = new ProfileController();
+        $controller->showProfil();
+        break;
+        
     case 'devenir_conducteur':
         $controller = new ProfileController();
         $controller->showDevenirConducteur();
@@ -63,6 +68,8 @@ switch ($action) {
         $controller = new ProfileController();
         $controller->processDevenirConducteur();
         break;
+        
+        
     // --- PAGE INTROUVABLE (Erreur 404) ---
     default:
         // Si l'utilisateur tape une action qui n'existe pas
