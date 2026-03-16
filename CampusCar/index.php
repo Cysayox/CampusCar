@@ -58,7 +58,7 @@ switch ($action) {
         $controller = new ProfileController();
         $controller->showProfil();
         break;
-        
+
     case 'devenir_conducteur':
         $controller = new ProfileController();
         $controller->showDevenirConducteur();
@@ -69,7 +69,10 @@ switch ($action) {
         $controller->processDevenirConducteur();
         break;
         
-        
+    case 'portefeuille':
+        $controller = new ProfileController();
+        $controller->showPortefeuille();
+        break;    
     // --- PAGE INTROUVABLE (Erreur 404) ---
     default:
         // Si l'utilisateur tape une action qui n'existe pas

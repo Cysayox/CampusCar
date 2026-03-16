@@ -32,7 +32,7 @@ class ProfileController {
         // 4. On appelle la vue
         require_once __DIR__ . '/../views/profil.php';
     }
-    
+
     // Affiche le formulaire
     public function showDevenirConducteur() {
         // On vérifie que l'utilisateur est bien connecté
@@ -77,6 +77,22 @@ class ProfileController {
 
         $succes = "Félicitations ! Vos documents sont valides (Permis > 6 mois). Votre profil conducteur est activé.";
         require_once __DIR__ . '/../views/devenir_conducteur.php';
+    }
+    // Affiche la page Portefeuille
+    public function showPortefeuille() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        require_once __DIR__ . '/../models/UserModel.php';
+        $userModel = new UserModel();
+        
+        // On récupère les infos à jour de l'utilisateur (notamment le solde)
+        $infos_user = $userModel->getUtilisateurById($_SESSION['user_id']);
+        $solde = $infos_user['solde_virtuel'];
+
+        require_once __DIR__ . '/../views/portefeuille.php';
     }
 }
 ?>
