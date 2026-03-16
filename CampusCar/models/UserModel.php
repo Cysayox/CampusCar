@@ -55,5 +55,26 @@ class UserModel {
         }
         return false;
     }
+    
+    // Récupère toutes les infos d'un utilisateur grâce à son ID
+    public function getUtilisateurById($id_utilisateur) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id_utilisateur = :id LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id_utilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Calcule la moyenne des notes reçues (la méthode la plus simple via SQL)
+    public function getMoyenneNotes($id_utilisateur) {
+        $query = "SELECT AVG(note_etoiles) as moyenne, COUNT(note_etoiles) as total_avis 
+                  FROM evaluer WHERE id_evalue = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id_utilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>
