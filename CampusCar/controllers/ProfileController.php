@@ -3,6 +3,36 @@
 
 class ProfileController {
     
+    // Affiche la page Mon Profil
+    public function showProfil() {
+        // On vérifie que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        require_once __DIR__ . '/../models/UserModel.php';
+        $userModel = new UserModel();
+        
+        // 1. On récupère les infos de base
+        $infos_user = $userModel->getUtilisateurById($_SESSION['user_id']);
+        
+        // 2. On récupère la moyenne et le nombre d'avis
+        $evaluations = $userModel->getMoyenneNotes($_SESSION['user_id']);
+        
+        // 3. On formate l'affichage de la note
+        if ($evaluations['moyenne'] !== null) {
+            $note_moyenne = round($evaluations['moyenne'], 1) . ' / 5';
+            $total_avis = $evaluations['total_avis'] . ' avis';
+        } else {
+            $note_moyenne = "Nouveau";
+            $total_avis = "0 avis";
+        }
+
+        // 4. On appelle la vue
+        require_once __DIR__ . '/../views/profil.php';
+    }
+    
     // Affiche le formulaire
     public function showDevenirConducteur() {
         // On vérifie que l'utilisateur est bien connecté
