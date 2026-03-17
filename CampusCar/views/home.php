@@ -13,8 +13,9 @@
     <main>
         <section class="hero-banner">
             
-            <div class="hero-content">
-                <h1>CampusCar<br>L'appli de covoiturage pour les étudiants</h1>
+            <div class="hero-content" style="flex-direction: column; align-items: center; gap: 20px;">
+                <h1 style="margin-bottom: 0;">CampusCar<br>L'appli de covoiturage pour les étudiants</h1>
+                
             </div>
 
             <form class="search-bar" action="index.php" method="GET" id="searchForm">

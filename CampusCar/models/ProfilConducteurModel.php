@@ -28,4 +28,12 @@ class ProfilConducteurModel {
             return false;
         }
     }
+    // Vérifie si un utilisateur est conducteur
+    public function isConducteur($id_utilisateur) {
+        $sql = "SELECT id_profil FROM profil_conducteur WHERE id_utilisateur = :id";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->bindParam(':id', $id_utilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0; // Renvoie vrai s'il trouve un profil
+    }
 }

@@ -68,5 +68,35 @@ class TrajetModel {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Récupère l'historique de tous les trajets (conducteur ou passager)
+    // Récupère l'historique de tous les trajets (conducteur ou passager)
+    public function getMesTrajets($id_utilisateur) {
+        $sql = "
+            SELECT t.*, c.nom_campus, u.prenom as conducteur_prenom, u.nom as conducteur_nom,
+                   (CASE WHEN t.id_conducteur = :id THEN 1 ELSE 0 END) as is_mon_trajet_conducteur,
+                   
+                   -- NOUVEAU : Compte le nombre total de réservations pour ce trajet
+                   (SELECT COUNT(*) FROM reserver WHERE id_trajet = t.id_trajet) as nb_passagers,
+                   
+                   -- NOUVEAU : Récupère le prénom du premier passager qui a réservé
+                   (SELECT u2.prenom 
+                    FROM reserver r2 
+                    JOIN utilisateur u2 ON r2.id_passager = u2.id_utilisateur 
+                    WHERE r2.id_trajet = t.id_trajet 
+                    LIMIT 1) as premier_passager_prenom
+
+            FROM trajet t
+            JOIN campus c ON t.id_campus_cible = c.id_campus
+            JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur
+            LEFT JOIN reserver r ON t.id_trajet = r.id_trajet
+            WHERE t.id_conducteur = :id OR r.id_passager = :id
+            GROUP BY t.id_trajet
+            ORDER BY t.date_heure DESC
+        ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id_utilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

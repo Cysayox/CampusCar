@@ -8,6 +8,7 @@ session_start();
 require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+require_once __DIR__ . '/controllers/TrajetController.php';
 
 // 3. On récupère l'action demandée dans l'URL (ex: index.php?action=login)
 // Si aucune action n'est précisée, on définit 'accueil' par défaut
@@ -72,7 +73,13 @@ switch ($action) {
     case 'portefeuille':
         $controller = new ProfileController();
         $controller->showPortefeuille();
-        break;    
+        break;  
+          
+    // --- ROUTES TRAJETS ---
+    case 'mes_trajets':
+        $controller = new TrajetController();
+        $controller->showMesTrajets();
+        break;
     // --- PAGE INTROUVABLE (Erreur 404) ---
     default:
         // Si l'utilisateur tape une action qui n'existe pas

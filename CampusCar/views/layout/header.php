@@ -21,6 +21,10 @@
                     <span class="solde-badge">💳 <?= number_format($_SESSION['user_solde'], 2, ',', ' ') ?> €</span>
                 <?php endif; ?>
 
+                <?php if (isset($_SESSION['is_driver']) && $_SESSION['is_driver'] == 1): ?>
+                    <a href="index.php?action=proposer_trajet" class="btn-header" style="border: 2px solid var(--bbc-bleu-vif); color: var(--bbc-bleu-vif);">➕ Proposer un trajet</a>
+                <?php endif; ?>
+
                 <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                     <a href="index.php?action=admin_dashboard" class="btn-header" style="background-color: #ffc107; color: #000; font-weight: bold;">⚙️ Panel Admin</a>
                 <?php endif; ?>
