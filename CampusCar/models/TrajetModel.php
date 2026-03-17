@@ -12,8 +12,11 @@ class TrajetModel {
 
     // Fonction pour afficher les trajets par défaut sur la page d'accueil
     public function getProchainsTrajets() {
-        // On récupère le trajet, le nom du campus et les infos du conducteur
-        $query = "SELECT t.*, u.prenom, u.nom, c.nom_campus 
+        // On récupère le trajet, le nom du campus, les infos du conducteur
+        // ET on calcule sa note moyenne et son nombre d'avis en direct !
+        $query = "SELECT t.*, u.prenom, u.nom, c.nom_campus,
+                  (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) AS note_moyenne,
+                  (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) AS nb_avis
                   FROM trajet t
                   JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur
                   JOIN campus c ON t.id_campus_cible = c.id_campus
@@ -30,9 +33,15 @@ class TrajetModel {
     // Fonction pour rechercher un trajet selon les critères du formulaire
     public function rechercherTrajets($id_campus, $sens_trajet, $date_trajet, $latitude = null, $longitude = null) {
         
-        $sql_select = "SELECT t.*, u.prenom, u.nom, c.nom_campus";
+        // On ajoute les mêmes sous-requêtes ici pour les résultats de recherche
+        $sql_select = "SELECT t.*, u.prenom, u.nom, c.nom_campus,
+                       (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) AS note_moyenne,
+                       (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) AS nb_avis";
+        
         $sql_from = " FROM trajet t JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur JOIN campus c ON t.id_campus_cible = c.id_campus";
         $sql_where = " WHERE t.id_campus_cible = :campus AND t.sens_trajet = :sens AND DATE(t.date_heure) = :date_recherche";
+        
+        // ... (Le reste de ta fonction avec $sql_order et ST_Distance_Sphere reste identique)
         $sql_order = " ORDER BY t.date_heure ASC"; // Tri par défaut
 
         // Si on a des coordonnées GPS, on calcule la distance et on trie par celle-ci
