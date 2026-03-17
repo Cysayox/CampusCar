@@ -158,7 +158,7 @@
                     <h3>🚗 Aucun trajet trouvé</h3>
                     <p>Essayez de modifier vos critères de recherche ou la date.</p>
                 </div>
-            <<?php 
+            <?php 
             endif; 
             ?>
         </div>
