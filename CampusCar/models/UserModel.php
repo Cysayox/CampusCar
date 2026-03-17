@@ -12,24 +12,27 @@ class UserModel {
     }
 
     // Fonction pour vérifier l'identifiant Sésame et le mot de passe
+    // Fonction pour vérifier l'identifiant Sésame et le mot de passe
     public function verifierUtilisateur($id_sesame, $mot_de_passe_saisi) {
-        // 1. On cherche l'utilisateur par son id_sesame
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id_sesame = :id_sesame LIMIT 1";
+        // On cherche l'utilisateur et on vérifie s'il existe dans profil_conducteur
+        $query = "SELECT u.*, 
+                         IF(p.id_profil IS NOT NULL, 1, 0) AS is_driver 
+                  FROM " . $this->table_name . " u
+                  LEFT JOIN profil_conducteur p ON u.id_utilisateur = p.id_utilisateur
+                  WHERE u.id_sesame = :id_sesame LIMIT 1";
+                  
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_sesame', $id_sesame);
         $stmt->execute();
 
-        // 2. Si l'utilisateur existe
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            // 3. On vérifie le mot de passe avec password_verify()
-            // (Assure-toi d'avoir bien utilisé password_hash() quand tu as créé tes faux comptes !)
+            // On vérifie le mot de passe
             if (password_verify($mot_de_passe_saisi, $row['mot_de_passe'])) {
-                return $row; // C'est tout bon, on renvoie les infos de Marc !
+                return $row; // C'est tout bon !
             }
         }
-        // Si on arrive ici, soit l'id n'existe pas, soit le mot de passe est faux
         return false;
     }
 
