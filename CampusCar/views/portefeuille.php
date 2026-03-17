@@ -3,7 +3,7 @@
 <style>
     /* En-tête bleu style Izly */
     .wallet-header {
-        background-color: deepskyblue; /* Couleur inspirée de ta capture */
+        background-color: deepskyblue;
         color: white;
         text-align: center;
         padding: 50px 20px;
@@ -23,11 +23,11 @@
         opacity: 0.9;
     }
 
-    /* Bloc d'actions principales (Solde + Payer) */
+    /* Bloc d'actions principales (Solde + Boutons) */
     .wallet-actions {
         background-color: var(--blanc);
         max-width: 800px;
-        margin: -80px auto 40px auto; /* Remonte sur la zone bleue */
+        margin: -80px auto 40px auto;
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.1);
@@ -35,6 +35,8 @@
         justify-content: space-between;
         align-items: center;
         border: 1px solid var(--bordure);
+        flex-wrap: wrap; /* Utile pour les petits écrans */
+        gap: 20px;
     }
 
     .current-balance {
@@ -43,19 +45,47 @@
         color: var(--bbc-fonce);
     }
 
-    .btn-pay {
-        background-color: var(--bbc-fonce);
-        color: white;
-        padding: 14px 30px;
+    /* Conteneur pour aligner les deux boutons */
+    .wallet-buttons-container {
+        display: flex;
+        gap: 15px;
+    }
+
+    /* Bouton Scanner (Style secondaire, fond blanc et contour bleu) */
+    .btn-scan {
+        background-color: var(--blanc);
+        color: var(--bbc-fonce);
+        padding: 14px 24px;
         border-radius: 24px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
-        border: none;
+        border: 2px solid var(--bbc-fonce);
         cursor: pointer;
         transition: 0.2s;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+    }
+
+    .btn-scan:hover {
+        background-color: var(--bordure);
+        transform: translateY(-2px);
+    }
+
+    /* Bouton Payer (Style principal, fond bleu foncé) */
+    .btn-pay {
+        background-color: var(--bbc-fonce);
+        color: white;
+        padding: 14px 24px;
+        border-radius: 24px;
+        font-size: 16px;
+        font-weight: bold;
+        border: 2px solid var(--bbc-fonce);
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-pay:hover {
@@ -165,27 +195,33 @@
             <div style="color: var(--bbc-gris-texte); font-weight: bold; font-size: 14px; text-transform: uppercase;">Solde Actuel</div>
             <div class="current-balance"><?= number_format($solde, 2, ',', ' ') ?> €</div>
         </div>
-        <button class="btn-pay" id="btnPayer">
-            📱 Scanner & Payer
-        </button>
+        
+        <div class="wallet-buttons-container">
+            <button class="btn-scan" id="btnScanner">
+                Scanner
+            </button>
+            <button class="btn-pay" id="btnPayer">
+                 QR Code
+            </button>
+        </div>
     </div>
 
     <section class="recharge-section">
         <div class="recharge-grid">
             <div class="recharge-card">
-                <div class="recharge-icon">💸</div>
-                <h4>Rechargement par virement immédiat sécurisé (à partir de 5€)</h4>
+                <div class="recharge-icon"><img src="assets/images/billet.svg" alt="Logo billet"></div>
+                <h4>Rechargement par virement immédiat sécurisé <br>(à partir de 5€)</h4>
             </div>
             <div class="recharge-card">
-                <div class="recharge-icon">💳</div>
-                <h4>Rechargement par carte bancaire (à partir de 10 €)</h4>
+                <div class="recharge-icon"><img src="assets/images/carte_bancaire.svg" alt="Logo carte bancaire"></div>
+                <h4>Rechargement par carte bancaire <br>(à partir de 10 €)</h4>
             </div>
             <div class="recharge-card">
-                <div class="recharge-icon">👥</div>
+                <div class="recharge-icon"><img src="assets/images/tiers.svg" alt="Logo tiers"></div>
                 <h4>Rechargement par un tiers</h4>
             </div>
             <div class="recharge-card">
-                <div class="recharge-icon">📍</div>
+                <div class="recharge-icon"><img src="assets/images/campus.svg" alt="Logo campus"></div>
                 <h4>Rechargement sur Campus</h4>
             </div>
         </div>
@@ -194,8 +230,8 @@
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="closeModal">&times;</span>
-            <h3 style="color: var(--bbc-fonce); margin-top: 0;">Paiement de la course</h3>
-            <p style="color: var(--bbc-gris-texte); font-size: 14px;">Présentez ce QR Code au conducteur ou scannez le sien pour valider le trajet.</p>
+            <h3 style="color: var(--bbc-fonce); margin-top: 0;">Mon QR Code</h3>
+            <p style="color: var(--bbc-gris-texte); font-size: 14px;">Présentez ce QR Code au passager pour qu'il le scanne et valide le paiement de la course.</p>
             
             <img src="assets/images/qrcode.png" alt="QR Code de paiement" class="qr-image">
             
@@ -205,24 +241,38 @@
 </main>
 
 <script>
+    // --- GESTION DU BOUTON PAYER (QR CODE) ---
     var modal = document.getElementById("qrModal");
-    var btn = document.getElementById("btnPayer");
+    var btnPayer = document.getElementById("btnPayer");
     var span = document.getElementById("closeModal");
 
-    // Quand on clique sur "Payer", on affiche la modale
-    btn.onclick = function() {
+    btnPayer.onclick = function() {
         modal.style.display = "block";
     }
 
-    // Quand on clique sur la croix (x), on la cache
     span.onclick = function() {
         modal.style.display = "none";
     }
 
-    // Quand on clique en dehors de la boîte blanche, on la cache aussi
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
+        }
+    }
+
+    // --- GESTION DU BOUTON SCANNER (SIMULATION CAMERA) ---
+    var btnScanner = document.getElementById("btnScanner");
+    
+    btnScanner.onclick = function() {
+        // La fonction confirm() du navigateur ressemble à une demande d'autorisation
+        let cameraAccess = confirm("campuscar.univ-antilles.fr souhaite accéder à votre appareil photo.");
+        
+        if(cameraAccess) {
+            // Si l'utilisateur clique sur "OK"
+            alert("Caméra activée. En attente du scan d'un QR Code...");
+        } else {
+            // Si l'utilisateur clique sur "Annuler"
+            alert("Accès à la caméra refusé.");
         }
     }
 </script>
