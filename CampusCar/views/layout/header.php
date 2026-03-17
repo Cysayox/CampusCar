@@ -34,7 +34,11 @@
                         <?php if ($_SESSION['user_role'] !== 'admin'): ?>
                             <a href="index.php?action=portefeuille">💳 Portefeuille</a>
                             <a href="index.php?action=mes_trajets">🚗 Mes Trajets</a>
-                            <a href="index.php?action=devenir_conducteur">📝 Devenir Conducteur</a>
+                            
+                            <?php if (!isset($_SESSION['is_driver']) || $_SESSION['is_driver'] == 0): ?>
+                                <a href="index.php?action=devenir_conducteur">📝 Devenir Conducteur</a>
+                            <?php endif; ?>
+                            
                         <?php endif; ?>
                         
                         <a href="index.php?action=logout" class="logout-text">🚪 Se déconnecter</a>
