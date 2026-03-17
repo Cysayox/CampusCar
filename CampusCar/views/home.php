@@ -143,7 +143,9 @@
                         </div>
                         
                         <div class="driver-rating" style="display: flex; align-items: center; gap: 4px; font-weight: 600;">
-                            <span style="color: #f5b000; font-size: 16px;">★</span> 4.8 <span style="color: var(--bbc-gris-texte); font-weight: normal; font-size: 13px;">(12)</span>
+                            <span style="color: #f5b000; font-size: 16px;">★</span> 
+                            <?= number_format($t['note_moyenne'] ?? 5, 1, ',', '') ?> 
+                            <span style="color: var(--bbc-gris-texte); font-weight: normal; font-size: 13px;">(<?= $t['nb_avis'] ?? 0 ?>)</span>
                         </div>
                     </div>
 
