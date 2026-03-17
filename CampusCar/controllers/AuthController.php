@@ -36,10 +36,11 @@ class AuthController {
             $_SESSION['user_sesame'] = $user['id_sesame'];
             $_SESSION['user_nom'] = $user['prenom'] . ' ' . $user['nom'];
             $_SESSION['user_solde'] = $user['solde_virtuel'];
-            
-            // --- L'AJOUT POUR L'ADMINISTRATION ---
-            // On vérifie si la colonne role existe, sinon on met "etudiant" par défaut
             $_SESSION['user_role'] = $user['role'] ?? 'etudiant'; 
+            
+            // --- NOUVEAUTÉ ---
+            // On mémorise si l'utilisateur est un conducteur (1) ou non (0)
+            $_SESSION['is_driver'] = $user['is_driver']; 
 
             // On redirige vers la page d'accueil de CampusCar
             header('Location: index.php');
