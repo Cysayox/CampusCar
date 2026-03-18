@@ -33,14 +33,18 @@
                     <img src="assets/images/avatar.svg" alt="Mon compte" class="profile-icon" onclick="toggleProfileMenu()" title="Mon compte" style="object-fit: cover;">
                     
                     <div id="profileMenu" class="dropdown-content">
-                        <a href="index.php?action=profil">👤 Mon Profil</a>
                         
                         <?php if ($_SESSION['user_role'] !== 'admin'): ?>
+                            <a href="index.php?action=profil">👤 Mon Profil</a>
                             <a href="index.php?action=portefeuille">💳 Portefeuille</a>
                             <a href="index.php?action=mes_trajets">🚗 Mes Trajets</a>
                             
                             <?php if (!isset($_SESSION['is_driver']) || $_SESSION['is_driver'] == 0): ?>
                                 <a href="index.php?action=devenir_conducteur">📝 Devenir Conducteur</a>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($_SESSION['is_driver']) && $_SESSION['is_driver'] === 'en_attente'): ?>
+                                <a href="#" style="color: #f5b000; cursor: default;">⏳ Demande en cours</a>
                             <?php endif; ?>
                             
                         <?php endif; ?>
