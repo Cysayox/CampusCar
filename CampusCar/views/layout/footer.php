@@ -26,10 +26,10 @@
             <div class="footer-column social-col">
                 <h4>Suivez-nous</h4>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/iutmartinique/" title="Instagram" target="_blank">
+                    <a href="https://www.instagram.com/univantilles/" title="Instagram" target="_blank">
                         <img src="assets/images/instagram.png" alt="Logo Instagram">
                     </a>
-                    <a href="https://www.linkedin.com/company/iut-de-la-martinique/" title="LinkedIn" target="_blank">
+                    <a href="https://www.linkedin.com/school/universit-des-antilles/" title="LinkedIn" target="_blank">
                         <img src="assets/images/linkedin.png" alt="Logo LinkedIn">
                     </a>
                 </div>
