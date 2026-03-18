@@ -28,6 +28,8 @@ class ProfilConducteurModel {
             return false;
         }
     }
+
+    // --- L'AJOUT DE TON COLLÈGUE ---
     // Vérifie si un utilisateur est conducteur
     public function isConducteur($id_utilisateur) {
         $sql = "SELECT id_profil FROM profil_conducteur WHERE id_utilisateur = :id";
@@ -36,4 +38,41 @@ class ProfilConducteurModel {
         $stmt->execute();
         return $stmt->rowCount() > 0; // Renvoie vrai s'il trouve un profil
     }
+
+    // --- TES MÉTHODES D'ADMINISTRATION (À CONSERVER ABSOLUMENT) ---
+    
+    /**
+     * Récupère toutes les demandes de conducteurs en attente
+     */
+    public function getDemandesEnAttente() {
+        $sql = "SELECT p.*, u.nom, u.prenom, u.id_sesame 
+                FROM profil_conducteur p
+                JOIN utilisateur u ON p.id_utilisateur = u.id_utilisateur
+                WHERE p.statut_validation = 'en_attente'
+                ORDER BY p.id_profil ASC";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Valide un profil conducteur (Passe de 'en_attente' à 'valide')
+     */
+    public function validerDemande($id_profil) {
+        $sql = "UPDATE profil_conducteur SET statut_validation = 'valide' WHERE id_profil = :id_profil";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->bindParam(':id_profil', $id_profil, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
+     * Rejette et supprime une demande de profil conducteur
+     */
+    public function rejeterDemande($id_profil) {
+        $sql = "DELETE FROM profil_conducteur WHERE id_profil = :id_profil AND statut_validation = 'en_attente'";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->bindParam(':id_profil', $id_profil, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
+?>

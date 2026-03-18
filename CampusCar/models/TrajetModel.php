@@ -68,7 +68,8 @@ class TrajetModel {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    // Récupère l'historique de tous les trajets (conducteur ou passager)
+
+    // --- CODE DU COLLÈGUE INTÉGRÉ ICI ---
     // Récupère l'historique de tous les trajets (conducteur ou passager)
     public function getMesTrajets($id_utilisateur) {
         $sql = "
@@ -83,7 +84,14 @@ class TrajetModel {
                     FROM reserver r2 
                     JOIN utilisateur u2 ON r2.id_passager = u2.id_utilisateur 
                     WHERE r2.id_trajet = t.id_trajet 
-                    LIMIT 1) as premier_passager_prenom
+                    LIMIT 1) as premier_passager_prenom,
+
+                   -- NOUVEAU : Récupère le nom du premier passager (pour l'affichage)
+                   (SELECT u2.nom 
+                    FROM reserver r2 
+                    JOIN utilisateur u2 ON r2.id_passager = u2.id_utilisateur 
+                    WHERE r2.id_trajet = t.id_trajet 
+                    LIMIT 1) as premier_passager_nom
 
             FROM trajet t
             JOIN campus c ON t.id_campus_cible = c.id_campus

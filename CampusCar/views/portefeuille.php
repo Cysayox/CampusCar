@@ -17,7 +17,6 @@
     }
 
     .wallet-header p {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 16px;
         max-width: 600px;
         margin: 0 auto;
@@ -158,12 +157,7 @@
         max-width: 400px;
         text-align: center;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        /* NOUVEAU CODE POUR CENTRER PARFAITEMENT */
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin: 0; /* On retire l'ancien margin */
+        position: relative;
     }
 
     .close-btn {

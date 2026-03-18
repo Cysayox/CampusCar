@@ -71,12 +71,23 @@ class ProfileController {
         $doc_assurance = $_FILES['doc_assurance']['name'] ?? 'non_fourni.pdf';
         $doc_carte_grise = $_FILES['doc_carte_grise']['name'] ?? 'non_fourni.pdf';
 
-        // 3. Appel futur au Modèle pour insérer dans la BDD
-        // $profilModel = new ProfilModel();
-        // $profilModel->creerProfilConducteur($_SESSION['user_id'], $date_permis, $doc_permis, ...);
+        // 3. Appel au Modèle pour insérer dans la BDD
+        require_once __DIR__ . '/../models/ProfilConducteurModel.php';
+        $profilModel = new ProfilConducteurModel();
+        
+        // La fonction va créer le profil, qui prendra automatiquement le statut 'en_attente' par défaut en BDD
+        $profilCreated = $profilModel->createProfilConducteur($_SESSION['user_id'], $date_permis);
 
-        $succes = "Félicitations ! Vos documents sont valides (Permis > 6 mois). Votre profil conducteur est activé.";
-        require_once __DIR__ . '/../views/devenir_conducteur.php';
+        if ($profilCreated) {
+            // On enregistre dans la session qu'il a une demande en attente (pour cacher le bouton du menu)
+            $_SESSION['is_driver'] = 'en_attente'; 
+
+            $succes = "Votre demande a bien été enregistrée ! Elle est actuellement en attente de validation par un administrateur.";
+            require_once __DIR__ . '/../views/devenir_conducteur.php';
+        } else {
+            $erreur = "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.";
+            require_once __DIR__ . '/../views/devenir_conducteur.php';
+        }
     }
     // Affiche la page Portefeuille
     public function showPortefeuille() {

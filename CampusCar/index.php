@@ -8,6 +8,7 @@ session_start();
 require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/ProfileController.php';
+// L'ajout de ton collègue :
 require_once __DIR__ . '/controllers/TrajetController.php';
 
 // 3. On récupère l'action demandée dans l'URL (ex: index.php?action=login)
@@ -73,14 +74,35 @@ switch ($action) {
     case 'portefeuille':
         $controller = new ProfileController();
         $controller->showPortefeuille();
-        break;  
-          
-    // --- ROUTES TRAJETS ---
+        break;    
+
+    // --- ROUTES TRAJETS (L'ajout de ton collègue) ---
     case 'mes_trajets':
         $controller = new TrajetController();
         $controller->showMesTrajets();
         break;
+
+    // --- ROUTES ADMINISTRATION ---
+    case 'admin_dashboard':
+        require_once __DIR__ . '/controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->showDashboard();
+        break;
+
+    case 'admin_valider':
+        require_once __DIR__ . '/controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->validerDemande();
+        break;
+
+    case 'admin_rejeter':
+        require_once __DIR__ . '/controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->rejeterDemande();
+        break;
+
     // --- PAGE INTROUVABLE (Erreur 404) ---
+    // Le "default" doit toujours être à la fin !
     default:
         // Si l'utilisateur tape une action qui n'existe pas
         echo "<h1>Erreur 404</h1>";

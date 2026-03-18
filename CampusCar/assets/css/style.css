@@ -139,7 +139,7 @@ header {
     border-radius: 32px; /* L'effet "Pilule" géante */
     padding: 10px 10px 10px 20px;
     margin: 50px auto;
-    max-width: 950px;
+    max-width: 1100px;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08); /* Ombre douce */
 }
 

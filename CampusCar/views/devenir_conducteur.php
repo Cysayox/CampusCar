@@ -136,17 +136,17 @@
 
                 <div class="form-group">
                     <label>Copie du Permis de conduire (PDF/Image)</label>
-                    <input type="file" name="doc_permis" accept=".pdf, image/jpeg, image/png" required>
+                    <input type="file" name="doc_permis" accept=".pdf, image/jpeg, image/png" >
                 </div>
 
                 <div class="form-group">
                     <label>Attestation d'assurance en cours</label>
-                    <input type="file" name="doc_assurance" accept=".pdf, image/jpeg, image/png" required>
+                    <input type="file" name="doc_assurance" accept=".pdf, image/jpeg, image/png" >
                 </div>
 
                 <div class="form-group">
                     <label>Carte grise du véhicule</label>
-                    <input type="file" name="doc_carte_grise" accept=".pdf, image/jpeg, image/png" required>
+                    <input type="file" name="doc_carte_grise" accept=".pdf, image/jpeg, image/png" >
                 </div>
 
                 <div class="action-buttons">
