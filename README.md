@@ -8,6 +8,7 @@
     - Recherche ne s'affiche que si la commune.departement == campus.departement
     - "proposer un trajet" s'affiche que si le profil conducteur est validé
     - que l'admin n'a que la seul option "se deconnecter"
+- Messagerie
 
 ## Fait : 
 - que le devenir conducteur envoie la demande à l'admin
