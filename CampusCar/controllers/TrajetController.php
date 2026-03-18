@@ -75,5 +75,39 @@ class TrajetController {
         }
         exit();
     }
+    // Affiche les détails d'un trajet précis
+    public function showTrajetDetails() {
+        // 1. Si l'utilisateur n'est pas connecté, on l'oblige à se connecter
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        // 2. On vérifie qu'on a bien un ID dans l'URL (ex: ?action=trajet_details&id=3)
+        $id_trajet = $_GET['id'] ?? null;
+        if (!$id_trajet) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        // 3. On récupère les infos du trajet
+        $trajetModel = new TrajetModel();
+        $trajet = $trajetModel->getTrajetById($id_trajet, $_SESSION['user_id']);
+
+        // 4. Si le trajet n'existe pas
+        if (!$trajet) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        // --- NOUVEAU : Récupération des passagers si c'est le conducteur ---
+        $passagers_list = [];
+        if ($trajet['is_driver']) {
+            $passagers_list = $trajetModel->getPassagersTrajet($id_trajet);
+        }
+
+        // 5. On affiche la vue
+        require_once __DIR__ . '/../views/trajet_details.php';
+    }
 }
 ?>

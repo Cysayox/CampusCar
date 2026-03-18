@@ -81,7 +81,6 @@ switch ($action) {
         $controller = new TrajetController();
         $controller->showMesTrajets();
         break;
-    
     case 'proposer_trajet':
         $controller = new TrajetController();
         $controller->showProposerTrajet();
@@ -91,6 +90,12 @@ switch ($action) {
         $controller = new TrajetController();
         $controller->processProposerTrajet();
         break;
+    
+    case 'trajet_details':
+        $controller = new TrajetController();
+        $controller->showTrajetDetails();
+        break;
+        
     // --- ROUTES ADMINISTRATION ---
     case 'admin_dashboard':
         require_once __DIR__ . '/controllers/AdminController.php';

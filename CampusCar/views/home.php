@@ -1,5 +1,18 @@
 <?php include __DIR__ . '/layout/header.php'; ?>
 
+<style>
+    /* Surlignage léger pour la page d'accueil / recherche */
+    .trip-card.is-driver-highlight {
+        border-left: 6px solid darkslateblue;
+        background-color: rgba(72, 61, 139, 0.03);
+    }
+    
+    .trip-card.is-passenger-highlight {
+        border-left: 6px solid deepskyblue;
+        background-color: rgba(0, 175, 245, 0.03);
+    }
+</style>
+
 <main>
     <section class="hero-banner">
         
@@ -77,8 +90,26 @@
                     $adresse_parts = explode(',', $t['adresse_exterieure']);
                     $arrivee = trim(preg_replace('/\s[0-9]{5}/', '', $adresse_parts[1] ?? $adresse_parts[0]));
                 }
+
+                // LOGIQUE DE SURLIGNAGE (Bandes de couleurs)
+                $highlight_class = '';
+                if (isset($_SESSION['user_id'])) {
+                    if ($t['id_conducteur'] == $_SESSION['user_id']) {
+                        $highlight_class = 'is-driver-card'; // Bande Violette (Défini dans style.css ou le header)
+                    } else {
+                        // Petite vérification rapide pour voir s'il est passager de ce trajet
+                        require_once __DIR__ . '/../models/Database.php';
+                        $db_check = (new Database())->getConnection();
+                        $stmt_check = $db_check->prepare("SELECT id_reservation FROM reserver WHERE id_trajet = ? AND id_passager = ?");
+                        $stmt_check->execute([$t['id_trajet'], $_SESSION['user_id']]);
+                        if ($stmt_check->rowCount() > 0) {
+                            $highlight_class = 'is-passenger-card'; // Bande Bleu Ciel
+                        }
+                    }
+                }
         ?>
-            <a href="index.php?action=trajet_details&id=<?= $t['id_trajet'] ?>" class="trip-card">
+        
+            <a href="index.php?action=trajet_details&id=<?= $t['id_trajet'] ?>" class="trip-card <?= $highlight_class ?>" style="<?= $highlight_class === 'is-driver-card' ? 'border-left: 6px solid darkslateblue; background-color: rgba(72, 61, 139, 0.02);' : ($highlight_class === 'is-passenger-card' ? 'border-left: 6px solid deepskyblue; background-color: rgba(0, 175, 245, 0.02);' : '') ?>">
                 
                 <div class="trip-main-row">
                     <div class="trip-route-horizontal">
@@ -103,12 +134,8 @@
                         <span style="color: var(--bbc-gris-texte); font-weight: normal; font-size: 13px;">(<?= $t['nb_avis'] ?? 0 ?>)</span>
                     </div>
                 </div>
-
             </a>
-        <?php 
-            endforeach; 
-        else: 
-        ?>
+        <?php endforeach; else: ?>
             <div class="no-results">
                 <h3>🚗 Aucun trajet trouvé</h3>
                 <p>Essayez de modifier vos critères de recherche ou la date.</p>

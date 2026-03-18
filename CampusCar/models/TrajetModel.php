@@ -123,5 +123,51 @@ class TrajetModel {
         
         return $stmt->execute();
     }
+    // Récupère les détails d'un trajet et le statut de l'utilisateur vis-à-vis de ce trajet
+    public function getTrajetById($id_trajet, $id_utilisateur) {
+        $sql = "
+            SELECT t.*, c.nom_campus, c.pole_geographique, 
+                   u.prenom as conducteur_prenom, u.nom as conducteur_nom, u.note_moyenne_calc,
+                   (SELECT COUNT(*) FROM reserver WHERE id_trajet = t.id_trajet) as nb_passagers,
+                   (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) as nb_avis,
+                   (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) as vraie_note
+            FROM trajet t
+            JOIN campus c ON t.id_campus_cible = c.id_campus
+            JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur
+            WHERE t.id_trajet = :id_trajet LIMIT 1
+        ";
+        
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->execute();
+        $trajet = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($trajet) {
+            // Est-ce que c'est le trajet de l'utilisateur (Conducteur) ?
+            $trajet['is_driver'] = ($trajet['id_conducteur'] == $id_utilisateur);
+            
+            // Est-ce que l'utilisateur est inscrit à ce trajet (Passager) ?
+            $sql_pass = "SELECT id_reservation FROM reserver WHERE id_trajet = :id_trajet AND id_passager = :id_passager LIMIT 1";
+            $stmt_pass = $this->conn->prepare($sql_pass);
+            $stmt_pass->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+            $stmt_pass->bindParam(':id_passager', $id_utilisateur, PDO::PARAM_INT);
+            $stmt_pass->execute();
+            
+            $trajet['is_passenger'] = ($stmt_pass->rowCount() > 0);
+        }
+
+        return $trajet;
+    }
+    // Récupère la liste des passagers inscrits à un trajet
+    public function getPassagersTrajet($id_trajet) {
+        $sql = "SELECT u.prenom, u.nom FROM reserver r 
+                JOIN utilisateur u ON r.id_passager = u.id_utilisateur 
+                WHERE r.id_trajet = :id_trajet";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
