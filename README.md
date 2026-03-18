@@ -1,6 +1,8 @@
 # CampusCar
 
 ## à faire : 
+- pour modifier, reprendre les informations du trajet, en gros préremplir 
+- annuler trajet jusqu'au bout (rendre le bouton fonctionnel)
 - possibilité de réserver un trajet
 - annuler reservation
 - Détails:
