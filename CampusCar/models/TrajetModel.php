@@ -106,5 +106,22 @@ class TrajetModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Fonction pour créer un nouveau trajet dans la base de données
+    public function creerTrajet($date_heure, $prix_course, $places_dispo, $id_conducteur, $adresse_exterieure, $sens_trajet, $id_campus_cible) {
+        $sql = "INSERT INTO trajet (date_heure, prix_course, places_dispo, id_conducteur, adresse_exterieure, sens_trajet, id_campus_cible)
+                VALUES (:date_heure, :prix_course, :places_dispo, :id_conducteur, :adresse_exterieure, :sens_trajet, :id_campus_cible)";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindParam(':date_heure', $date_heure);
+        $stmt->bindParam(':prix_course', $prix_course);
+        $stmt->bindParam(':places_dispo', $places_dispo);
+        $stmt->bindParam(':id_conducteur', $id_conducteur);
+        $stmt->bindParam(':adresse_exterieure', $adresse_exterieure);
+        $stmt->bindParam(':sens_trajet', $sens_trajet);
+        $stmt->bindParam(':id_campus_cible', $id_campus_cible);
+        
+        return $stmt->execute();
+    }
 }
 ?>
