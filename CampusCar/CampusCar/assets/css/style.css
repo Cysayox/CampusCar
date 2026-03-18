@@ -1,0 +1,535 @@
+/* =========================================
+   STYLE GLOBAL (Inspiration BlaBlaCar)
+   ========================================= */
+:root {
+    /* La palette de couleurs officielle BlaBlaCar */
+    --bbc-bleu-vif: #00aff5;      /* Bleu des boutons */
+    --bbc-bleu-hover: #008cc5;    /* Bleu au survol */
+    --bbc-fonce: #054752;         /* Texte principal (Gris/Bleu très foncé) */
+    --bbc-gris-texte: #708c91;    /* Texte secondaire */
+    --bbc-fond: #ffffff;          /* Fond du site très clair */
+    --blanc: #ffffff;
+    --bordure: #ededed;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    background-color: #eaedf1; /* Ton nouveau fond gris/bleu ! */
+    color: var(--bbc-fonce);
+}
+/* =========================================
+   BANNIÈRE (HEADER) - TOUTE BLANCHE
+   ========================================= */
+header {
+    background-color: var(--blanc);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--bordure); /* Petite ligne discrète en bas */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: var(--bbc-bleu-vif); /* Logo en bleu vif */
+}
+
+.logo-link h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-weight: 500;
+}
+
+/* Boutons du header */
+.btn-header {
+    color: var(--bbc-bleu-vif);
+    background-color: transparent;
+    padding: 10px 16px;
+    text-decoration: none;
+    border-radius: 24px; /* Très arrondi */
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+.btn-header:hover {
+    background-color: rgba(0, 175, 245, 0.1); /* Fond bleu très léger au survol */
+}
+
+/* Le solde */
+.solde-badge {
+    color: var(--bbc-fonce);
+    font-weight: bold;
+    font-size: 15px;
+}
+
+/* =========================================
+   MENU DÉROULANT PROFIL
+   ========================================= */
+.profile-container { position: relative; display: inline-block; }
+
+.profile-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--bbc-fond);
+    color: var(--bbc-fonce);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.profile-icon:hover {
+    background-color: var(--bordure);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: var(--blanc);
+    min-width: 240px;
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.12);
+    border-radius: 16px;
+    z-index: 1000;
+    margin-top: 12px;
+    border: 1px solid var(--bordure);
+    overflow: hidden;
+}
+
+.show-dropdown { display: block; }
+
+.dropdown-content a {
+    color: var(--bbc-fonce);
+    padding: 16px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.dropdown-content a:hover { background-color: var(--bbc-fond); }
+.dropdown-content a.logout-text { color: #e55353; border-top: 1px solid var(--bordure); }
+
+/* =========================================
+   BARRE DE RECHERCHE (LA PILULE BLANCHE)
+   ========================================= */
+.search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: var(--blanc);
+    border-radius: 32px; /* L'effet "Pilule" géante */
+    padding: 10px 10px 10px 20px;
+    margin: 50px auto;
+    max-width: 1100px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08); /* Ombre douce */
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 5px 15px;
+    border-right: 1px solid var(--bordure); /* Séparateur discret */
+}
+
+/* Enlever la bordure du dernier élément avant le bouton */
+.input-group:nth-last-of-type(2) { border-right: none; }
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bbc-fonce);
+    margin-bottom: 4px;
+}
+
+.input-group input, .input-group select {
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--bbc-fonce);
+    background: transparent;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.input-group input::placeholder { color: var(--bbc-gris-texte); }
+
+/* Bouton inverser (⇄) */
+.btn-swap {
+    background-color: var(--blanc);
+    border: 1px solid var(--bordure);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--bbc-bleu-vif);
+    font-weight: bold;
+    margin: 0 -16px; /* Le fait chevaucher entre les deux blocs */
+    z-index: 2;
+    transition: 0.2s;
+}
+.btn-swap:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+/* Gros bouton "Rechercher" Bleu */
+.btn-submit {
+    background-color: var(--bbc-bleu-vif);
+    color: var(--blanc);
+    border: none;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 10px;
+}
+
+.btn-submit:hover { background-color: var(--bbc-bleu-hover); }
+
+/* =========================================
+   AFFICHAGE DES TRAJETS (CARDS)
+   ========================================= */
+.results-container {
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.trip-card {
+    background-color: var(--blanc);
+    border-radius: 16px;
+    padding: 24px;
+    text-decoration: none;
+    color: var(--bbc-fonce);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.trip-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.trip-top { display: flex; justify-content: space-between; margin-bottom: 24px; }
+.trip-itinerary { display: flex; gap: 24px; }
+
+.trip-times {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 18px;
+    position: relative;
+    min-height: 80px;
+}
+
+.trip-times::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    bottom: 28px;
+    width: 3px;
+    border-radius: 2px;
+    background-color: var(--bbc-fonce);
+    transform: translateX(-50%);
+}
+
+.trip-places {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.trip-price { font-size: 28px; font-weight: 800; color: var(--bbc-fonce); }
+
+.trip-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--bordure);
+    padding-top: 16px;
+}
+
+.driver-info { display: flex; align-items: center; gap: 12px; }
+
+.driver-avatar {
+    width: 32px; /* On force la taille par sécurité */
+    height: 32px;
+    border-radius: 50%; /* C'est ça qui rend l'image ronde ! */
+    background-color: var(--bbc-fond);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--bordure); /* Un tout petit contour gris élégant */
+}
+
+.driver-name { font-weight: 600; font-size: 16px; }
+.driver-rating { color: var(--bbc-fonce); font-size: 14px; font-weight: 500; }
+.driver-rating span { color: #f5b000; font-weight: bold; } /* Étoile jaune */
+
+.seats-left { font-size: 14px; color: var(--bbc-gris-texte); font-weight: 500; }
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    background: transparent;
+    color: var(--bbc-gris-texte);
+}
+
+/* =========================================
+   NOUVEAU DESIGN HORIZONTAL DU TRAJET
+   ========================================= */
+.trip-main-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.trip-route-horizontal {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 20px;
+    color: var(--bbc-fonce);
+    font-size: 16px;
+}
+
+/* La ligne en pointillés qui s'étire automatiquement */
+.route-line-dashed {
+    flex-grow: 1;
+    border-bottom: 2px dashed #cbd2d6; /* Gris clair BlaBlaCar */
+    margin: 0 15px;
+    min-width: 40px; /* Pour éviter que la ligne disparaisse sur petit écran */
+}
+
+.city-name {
+    font-weight: 700;
+}
+
+.trip-driver-simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pousse les éléments aux deux extrémités ! */
+    gap: 10px;
+    color: var(--bbc-fonce);
+    font-size: 15px;
+    font-weight: 500;
+    
+    /* Le trait de séparation qu'on a ajouté tout à l'heure */
+    border-top: 1px solid var(--bordure); 
+    padding-top: 12px; 
+    margin-top: 8px;   
+}
+/* =========================================
+   BANIÈRE HERO (Image + Texte d'accueil)
+   ========================================= */
+.hero-banner {
+    /* Couleur de fond de secours si l'image plante */
+    background-color: var(--bbc-fonce); 
+    
+    /* L'image avec le filtre sombre */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/hero-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    width: 100%;
+    min-height: 450px;
+    
+    /* Flexbox pour tout centrer au milieu */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centre de haut en bas */
+    align-items: center; /* Centre de gauche à droite */
+    
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.hero-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-content h1 {
+    color: var(--blanc);
+    text-align: center; /* Centre les lignes de texte entre elles */
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 40px; 
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    line-height: 1.2;
+    max-width: 800px; /* Empêche le texte de s'étirer à l'infini sur grand écran */
+}
+
+/* =========================================
+   BOUTON DE CONNEXION (Dégradé personnalisé)
+   ========================================= */
+.btn-login-gradient {
+    /* Le dégradé qui va de darkslateblue vers deepskyblue */
+    background: linear-gradient(135deg, darkslateblue, deepskyblue);
+    color: white !important; /* On force le texte en blanc */
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(72, 61, 139, 0.3); /* Petite ombre aux couleurs du bouton */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-login-gradient:hover {
+    transform: translateY(-2px); /* Le bouton "saute" légèrement au survol */
+    box-shadow: 0 6px 15px rgba(36, 36, 36, 0.4);
+    filter: brightness(1.1); /* Rend le dégradé un peu plus lumineux */
+}
+
+/* =========================================
+   FOOTER (Bas de page)
+   ========================================= */
+.site-footer {
+    background-color: var(--blanc);
+    border-top: 1px solid var(--bordure); /* Le fameux trait de démarcation ! */
+    padding: 60px 20px 20px 20px;
+    margin-top: 60px; /* Laisse de l'espace avec le contenu au-dessus */
+    color: var(--bbc-fonce);
+}
+
+.footer-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr; /* 4 colonnes, la première est plus large */
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-column h3 {
+    margin-top: 0;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.footer-column h4 {
+    color: var(--bbc-fonce);
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.brand-col p {
+    color: var(--bbc-gris-texte);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 12px;
+}
+
+.footer-column ul li a {
+    color: var(--bbc-gris-texte);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+/* Le texte devient bleu clair au survol ! */
+.footer-column ul li a:hover {
+    color: deepskyblue; 
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: var(--bbc-fond);
+    border: 1px solid var(--bordure);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.social-links a:hover {
+    background-color: #f4f5f6;
+    transform: translateY(-3px); /* Le petit bouton saute au survol */
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--bordure);
+    color: var(--bbc-gris-texte);
+    font-size: 13px;
+}
+
+/* Taille des logos des réseaux sociaux */
+.social-links a img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain; /* Empêche le logo de se déformer */
+    transition: filter 0.2s; /* Pour un petit effet au survol */
+}
+
+/* Optionnel : Assombrit légèrement le logo quand on passe la souris dessus */
+.social-links a:hover img {
+    filter: brightness(0.8);
+}
+
+/* Mode Téléphone : on empile les colonnes les unes sous les autres */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .social-links {
+        justify-content: center;
+    }
+}
