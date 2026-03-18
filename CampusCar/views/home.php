@@ -7,14 +7,14 @@
             <h1 style="margin-bottom: 0;">CampusCar<br>L'appli de covoiturage pour les étudiants</h1>
         </div>
 
-        <form class="search-bar" action="index.php" method="GET" id="searchForm">
+        <form class="search-bar" action="index.php" method="GET" id="searchForm" style="max-width: 1200px;">
             <input type="hidden" name="action" value="recherche">   
             
-            <div class="input-group" id="bloc-adresse" style="flex: 2.5;">
+            <div class="input-group" id="bloc-adresse" style="flex: 2.5; position: relative;">
                 <label id="label-adresse">Départ</label>
-                <input type="text" name="adresse" list="liste-communes" placeholder="Ex: Fort-de-France, Lamentin..." required autocomplete="off" value="<?= htmlspecialchars($adresse ?? '') ?>">
+                <input type="text" id="input-adresse" name="adresse" placeholder="Ex: Fort-de-France, Lamentin..." required autocomplete="off" value="<?= htmlspecialchars($adresse ?? '') ?>">
                 
-                <datalist id="liste-communes"></datalist>
+                <div id="suggestions-adresse" class="custom-dropdown"></div>
             </div>
 
             <button type="button" class="btn-swap" id="swapBtn" title="Inverser le sens du trajet">⇄</button>
@@ -49,7 +49,7 @@
                 <input type="date" name="jour_retour">
             </div>
 
-            <div class="input-group" style="min-width: 80px;">
+            <div class="input-group" style="flex: 0 0 90px; border-right: none;">
                 <label>Passager(s)</label>
                 <input type="number" name="passagers" min="1" max="4" value="1">
             </div>
@@ -154,41 +154,63 @@
         versCampus = !versCampus; 
     });
 
-    // --- TON CODE DE MÉMORISATION DU SENS ---
     const sensActuel = "<?= htmlspecialchars($_GET['sens_trajet'] ?? 'vers campus') ?>";
     if (sensActuel === 'depuis campus') {
         swapBtn.click();
     }
 
-    // --- TON CODE D'AUTOCOMPLÉTION API GOUVERNEMENT ---
-    const inputAdresse = document.querySelector('input[name="adresse"]');
-    const datalistCommunes = document.getElementById('liste-communes');
+    const inputAdresse = document.getElementById('input-adresse');
+    const boxSuggestions = document.getElementById('suggestions-adresse');
+    let timeoutRecherche; 
 
-    inputAdresse.addEventListener('input', async function(e) {
+    inputAdresse.addEventListener('input', function(e) {
+        clearTimeout(timeoutRecherche); 
+        
         const saisie = e.target.value;
+        
         if (saisie.length >= 3) {
-            try {
-                const apiURL = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(saisie)}&lat=14.6&lon=-61.0&autocomplete=1&limit=5`;
-                const reponse = await fetch(apiURL);
-                const data = await reponse.json();
-                
-                datalistCommunes.innerHTML = '';
-                
-                if (data.features) {
-                    const adressesAntilles = data.features.filter(lieu => {
-                        const cp = lieu.properties.postcode;
-                        return cp && (cp.startsWith('971') || cp.startsWith('972'));
-                    });
+            timeoutRecherche = setTimeout(async () => {
+                try {
+                    const apiURL = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(saisie)}&lat=14.6&lon=-61.0&autocomplete=1&limit=5`;
+                    const reponse = await fetch(apiURL);
+                    const data = await reponse.json();
+                    
+                    boxSuggestions.innerHTML = '';
+                    let hasResults = false;
 
-                    adressesAntilles.forEach(lieu => {
-                        const option = document.createElement('option');
-                        option.value = lieu.properties.label; 
-                        datalistCommunes.appendChild(option);
-                    });
+                    if (data.features) {
+                        const adressesAntilles = data.features.filter(lieu => {
+                            const cp = lieu.properties.postcode;
+                            return cp && (cp.startsWith('971') || cp.startsWith('972'));
+                        });
+
+                        adressesAntilles.forEach(lieu => {
+                            hasResults = true;
+                            const divItem = document.createElement('div');
+                            divItem.className = 'custom-dropdown-item';
+                            divItem.innerHTML = `${lieu.properties.label}`; 
+                            
+                            divItem.addEventListener('click', function() {
+                                inputAdresse.value = lieu.properties.label;
+                                boxSuggestions.style.display = 'none';
+                            });
+                            
+                            boxSuggestions.appendChild(divItem);
+                        });
+                    }
+                    boxSuggestions.style.display = hasResults ? 'block' : 'none';
+                } catch (erreur) {
+                    console.error(erreur);
                 }
-            } catch (erreur) {
-                console.error("Erreur lors de la récupération des adresses :", erreur);
-            }
+            }, 300); 
+        } else {
+            boxSuggestions.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== inputAdresse && e.target !== boxSuggestions) {
+            boxSuggestions.style.display = 'none';
         }
     });
 </script>
