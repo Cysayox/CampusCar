@@ -81,7 +81,16 @@ switch ($action) {
         $controller = new TrajetController();
         $controller->showMesTrajets();
         break;
+    
+    case 'proposer_trajet':
+        $controller = new TrajetController();
+        $controller->showProposerTrajet();
+        break;
 
+    case 'process_proposer_trajet':
+        $controller = new TrajetController();
+        $controller->processProposerTrajet();
+        break;
     // --- ROUTES ADMINISTRATION ---
     case 'admin_dashboard':
         require_once __DIR__ . '/controllers/AdminController.php';
@@ -101,6 +110,7 @@ switch ($action) {
         $controller->rejeterDemande();
         break;
 
+    
     // --- PAGE INTROUVABLE (Erreur 404) ---
     // Le "default" doit toujours être à la fin !
     default:
