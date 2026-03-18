@@ -109,5 +109,92 @@ class TrajetController {
         // 5. On affiche la vue
         require_once __DIR__ . '/../views/trajet_details.php';
     }
+    // --------------------------------------------------------
+    // --- LOGIQUE POUR ANNULER UN TRAJET (CONDUCTEUR) ---
+    // --------------------------------------------------------
+    public function processAnnulerTrajet() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        $id_trajet = $_GET['id'] ?? null;
+        if ($id_trajet) {
+            $trajetModel = new TrajetModel();
+            // On supprime en passant l'ID de l'utilisateur pour être sûr qu'il est bien le proprio
+            $trajetModel->deleteTrajet($id_trajet, $_SESSION['user_id']);
+        }
+        
+        // On redirige vers l'historique une fois annulé
+        header('Location: index.php?action=mes_trajets');
+        exit();
+    }
+
+    // --------------------------------------------------------
+    // --- LOGIQUE POUR MODIFIER UN TRAJET (CONDUCTEUR) ---
+    // --------------------------------------------------------
+    
+    // 1. Afficher le formulaire de modification pré-rempli
+    public function showModifierTrajet() {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_driver']) || $_SESSION['is_driver'] != 1) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        $id_trajet = $_GET['id'] ?? null;
+        if (!$id_trajet) {
+            header('Location: index.php?action=mes_trajets');
+            exit();
+        }
+
+        $trajetModel = new TrajetModel();
+        $trajet = $trajetModel->getTrajetById($id_trajet, $_SESSION['user_id']);
+
+        // Sécurité : Le trajet doit exister, on doit être le conducteur, ET il ne doit y avoir aucun passager
+        if (!$trajet || !$trajet['is_driver'] || $trajet['nb_passagers'] > 0) {
+            header('Location: index.php?action=mes_trajets');
+            exit();
+        }
+
+        // On a besoin de la liste des campus pour le menu déroulant
+        require_once __DIR__ . '/../models/CampusModel.php';
+        $campusModel = new CampusModel();
+        $liste_campus = $campusModel->getTousLesCampus();
+
+        // On appelle la vue
+        require_once __DIR__ . '/../views/modifier_trajet.php';
+    }
+
+    // 2. Traiter la soumission du formulaire de modification
+    public function processModifierTrajet() {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_driver']) || $_SESSION['is_driver'] != 1) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        $id_trajet = $_POST['id_trajet'] ?? null;
+        if (!$id_trajet) {
+            header('Location: index.php?action=mes_trajets');
+            exit();
+        }
+
+        // Récupération des données modifiées
+        $date_trajet = $_POST['date_trajet'] ?? '';
+        $heure_trajet = $_POST['heure_trajet'] ?? '';
+        $sens_trajet = $_POST['sens_trajet'] ?? '';
+        $id_campus_cible = $_POST['campus'] ?? '';
+        $adresse_exterieure = $_POST['adresse'] ?? '';
+        $places_dispo = $_POST['places_dispo'] ?? 1;
+        $prix_course = $_POST['prix_course'] ?? 0;
+
+        $date_heure = $date_trajet . ' ' . $heure_trajet . ':00';
+
+        $trajetModel = new TrajetModel();
+        $trajetModel->updateTrajet($id_trajet, $date_heure, $prix_course, $places_dispo, $_SESSION['user_id'], $adresse_exterieure, $sens_trajet, $id_campus_cible);
+
+        // On renvoie vers la page de détails mise à jour !
+        header('Location: index.php?action=trajet_details&id=' . $id_trajet);
+        exit();
+    }
 }
 ?>

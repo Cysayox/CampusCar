@@ -64,7 +64,7 @@
                 $date_format_fr = "$nom_jour $num_jour $nom_mois";
                 $heure_format = date('H\hi', $timestamp);
                 
-                // --- NOUVEAU : On vérifie si le trajet est passé ---
+                // --- ON VÉRIFIE SI LE TRAJET EST PASSÉ ---
                 $is_past = $timestamp < time();
             ?>
 
@@ -126,6 +126,7 @@
                     <div class="action-btn" style="background-color: #e1e4e8; color: #888; cursor: not-allowed;">Trajet terminé</div>
                 
                 <?php else: ?>
+                    
                     <?php if (!$trajet['is_driver'] && !$trajet['is_passenger']): ?>
                         <?php if ($trajet['nb_passagers'] < $trajet['places_dispo']): ?>
                             <a href="index.php?action=reserver&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-reserve">Réserver ce trajet</a>
@@ -144,6 +145,7 @@
                     <?php elseif ($trajet['is_passenger']): ?>
                         <a href="index.php?action=annuler_reservation&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-cancel-resa" onclick="return confirm('Voulez-vous vraiment annuler votre place ?');">❌ Annuler ma réservation</a>
                     <?php endif; ?>
+                    
                 <?php endif; ?>
             </div>
 

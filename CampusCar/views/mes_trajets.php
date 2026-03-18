@@ -8,7 +8,7 @@
     
     .trip-card-mes-trajets {
         display: block; 
-        background-color: var(--blanc); 
+        background-color: var(--blanc) !important; /* Force le fond blanc */
         border-radius: 16px; 
         padding: 24px;
         text-decoration: none; 
@@ -20,15 +20,9 @@
     }
     .trip-card-mes-trajets:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
     
-    /* --- NOUVEAU : Les bandes de couleur (Fond forcé en BLANC) --- */
-    .is-driver-card {
-        border-left: 6px solid darkslateblue;
-        background-color: var(--blanc) !important;
-    }
-    .is-passenger-card {
-        border-left: 6px solid deepskyblue;
-        background-color: var(--blanc) !important;
-    }
+    /* Bandes de couleur SANS modifier le fond */
+    .is-driver-card { border-left: 6px solid darkslateblue !important; }
+    .is-passenger-card { border-left: 6px solid deepskyblue !important; }
 
     .role-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
     .role-conducteur { background-color: rgba(72, 61, 139, 0.15); color: darkslateblue; }
@@ -80,7 +74,6 @@ function renderTripCard($t) {
     $heure_format = date('H\hi', strtotime($t['date_heure']));
     $is_conducteur = $t['is_mon_trajet_conducteur'] == 1;
     
-    // Application de la classe CSS
     $card_class = $is_conducteur ? 'is-driver-card' : 'is-passenger-card';
 ?>
     <a href="index.php?action=trajet_details&id=<?= $t['id_trajet'] ?>" class="trip-card-mes-trajets <?= $card_class ?>">

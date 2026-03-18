@@ -95,7 +95,21 @@ switch ($action) {
         $controller = new TrajetController();
         $controller->showTrajetDetails();
         break;
-        
+    
+    case 'annuler_trajet':
+        $controller = new TrajetController();
+        $controller->processAnnulerTrajet();
+        break;
+
+    case 'modifier_trajet':
+        $controller = new TrajetController();
+        $controller->showModifierTrajet();
+        break;
+
+    case 'process_modifier_trajet':
+        $controller = new TrajetController();
+        $controller->processModifierTrajet();
+        break;
     // --- ROUTES ADMINISTRATION ---
     case 'admin_dashboard':
         require_once __DIR__ . '/controllers/AdminController.php';

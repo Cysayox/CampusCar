@@ -169,5 +169,44 @@ class TrajetModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // --- FONCTION POUR METTRE À JOUR UN TRAJET ---
+    public function updateTrajet($id_trajet, $date_heure, $prix_course, $places_dispo, $id_conducteur, $adresse_exterieure, $sens_trajet, $id_campus_cible) {
+        $sql = "UPDATE trajet 
+                SET date_heure = :date_heure, 
+                    prix_course = :prix_course, 
+                    places_dispo = :places_dispo, 
+                    adresse_exterieure = :adresse_exterieure, 
+                    sens_trajet = :sens_trajet, 
+                    id_campus_cible = :id_campus_cible 
+                WHERE id_trajet = :id_trajet AND id_conducteur = :id_conducteur";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':date_heure', $date_heure);
+        $stmt->bindParam(':prix_course', $prix_course);
+        $stmt->bindParam(':places_dispo', $places_dispo);
+        $stmt->bindParam(':adresse_exterieure', $adresse_exterieure);
+        $stmt->bindParam(':sens_trajet', $sens_trajet);
+        $stmt->bindParam(':id_campus_cible', $id_campus_cible);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->bindParam(':id_conducteur', $id_conducteur, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
+
+    // --- FONCTION POUR SUPPRIMER (ANNULER) UN TRAJET ---
+    public function deleteTrajet($id_trajet, $id_conducteur) {
+        // 1. Par sécurité, on supprime d'abord les éventuelles réservations liées à ce trajet
+        $sql_resa = "DELETE FROM reserver WHERE id_trajet = :id";
+        $stmt_resa = $this->conn->prepare($sql_resa);
+        $stmt_resa->bindParam(':id', $id_trajet, PDO::PARAM_INT);
+        $stmt_resa->execute();
+
+        // 2. Ensuite, on supprime le trajet lui-même (en vérifiant que c'est bien le bon conducteur)
+        $sql = "DELETE FROM trajet WHERE id_trajet = :id_trajet AND id_conducteur = :id_conducteur";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->bindParam(':id_conducteur', $id_conducteur, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 ?>
