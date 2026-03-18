@@ -150,16 +150,20 @@
 
     .modal-content {
         background-color: #fefefe;
-        margin: 10% auto; 
         padding: 30px;
         border-radius: 16px;
         width: 90%;
         max-width: 400px;
         text-align: center;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        position: relative;
+        
+        /* NOUVEAU CODE POUR CENTRER PARFAITEMENT */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0; /* On retire l'ancien margin */
     }
-
     .close-btn {
         color: #aaa;
         position: absolute;
