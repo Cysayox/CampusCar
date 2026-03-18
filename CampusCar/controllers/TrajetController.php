@@ -28,5 +28,52 @@ class TrajetController {
 
         require_once __DIR__ . '/../views/mes_trajets.php';
     }
+    // 1. Affiche le formulaire pour proposer un trajet
+    public function showProposerTrajet() {
+        // On vérifie que l'utilisateur est connecté ET qu'il est bien conducteur
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_driver']) || $_SESSION['is_driver'] != 1) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        // On a besoin de la liste des campus pour le menu déroulant
+        require_once __DIR__ . '/../models/CampusModel.php';
+        $campusModel = new CampusModel();
+        $liste_campus = $campusModel->getTousLesCampus();
+
+        require_once __DIR__ . '/../views/proposer_trajet.php';
+    }
+
+    // 2. Traite les données envoyées par le formulaire
+    public function processProposerTrajet() {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_driver']) || $_SESSION['is_driver'] != 1) {
+            header('Location: index.php?action=accueil');
+            exit();
+        }
+
+        // Récupération des données
+        $date_trajet = $_POST['date_trajet'] ?? '';
+        $heure_trajet = $_POST['heure_trajet'] ?? '';
+        $sens_trajet = $_POST['sens_trajet'] ?? '';
+        $id_campus_cible = $_POST['campus'] ?? '';
+        $adresse_exterieure = $_POST['adresse'] ?? '';
+        $places_dispo = $_POST['places_dispo'] ?? 1;
+        $prix_course = $_POST['prix_course'] ?? 0;
+
+        // On assemble la date et l'heure au format lisible par SQL (YYYY-MM-DD HH:MM:SS)
+        $date_heure = $date_trajet . ' ' . $heure_trajet . ':00';
+
+        $trajetModel = new TrajetModel();
+        $result = $trajetModel->creerTrajet($date_heure, $prix_course, $places_dispo, $_SESSION['user_id'], $adresse_exterieure, $sens_trajet, $id_campus_cible);
+
+        if ($result) {
+            // Si c'est un succès, on le renvoie vers son historique de trajets
+            header('Location: index.php?action=mes_trajets');
+        } else {
+            // Si erreur (rare), on redirige vers l'accueil
+            header('Location: index.php?action=accueil');
+        }
+        exit();
+    }
 }
 ?>
