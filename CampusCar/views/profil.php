@@ -82,9 +82,7 @@
 <main>
     <div class="profile-card">
         
-        <div class="profile-avatar-large">
-            👤
-        </div>
+        <img src="assets/images/avatar_profil.svg" alt="Photo de profil" class="profile-avatar-large" style="object-fit: cover;">
 
         <h2 class="profile-name">
             <?= htmlspecialchars($infos_user['prenom']) ?> <?= htmlspecialchars($infos_user['nom']) ?>
