@@ -21,7 +21,7 @@
 - Détails:
     - R
  
-## evaluation :
+## evaluation/notation :
 - sur la page trajet on voit les evaluations que les autres utilisateurs nous on mis
 - sur profil soit une page evaluation soit une section où voit tout
 - 
