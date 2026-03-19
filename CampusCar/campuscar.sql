@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : dim. 15 mars 2026 à 17:49
+-- Généré le : jeu. 19 mars 2026 à 01:12
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `evaluer` (
   KEY `id_trajet` (`id_trajet`),
   KEY `id_evaluateur` (`id_evaluateur`),
   KEY `id_evalue` (`id_evalue`)
-) ;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `evaluer`
@@ -80,7 +80,13 @@ CREATE TABLE IF NOT EXISTS `evaluer` (
 INSERT INTO `evaluer` (`id_evaluation`, `id_trajet`, `id_evaluateur`, `id_evalue`, `note_etoiles`, `commentaire`) VALUES
 (1, 101, 1114, 1112, 5, 'Conduite au top, Samira est très ponctuelle !'),
 (2, 101, 1115, 1112, 4, 'Super trajet, bonne musique.'),
-(3, 102, 1114, 1115, 5, 'Merci de m\'avoir déposée si près de chez moi Flavy !');
+(3, 102, 1114, 1115, 5, 'Merci de m\'avoir déposée si près de chez moi Flavy !'),
+(4, 104, 1112, 1117, 5, 'Super conducteur, ponctuel et voiture très propre !'),
+(5, 104, 1116, 1117, 5, 'Bon trajet, Evann conduit bien et est très prudent.'),
+(6, 104, 1117, 1112, 5, 'Samira est une super passagère, très ponctuelle.'),
+(7, 104, 1117, 1116, 3, ''),
+(8, 104, 1112, 1116, 5, 'Compagnie très agréable à l\'arrière.'),
+(9, 104, 1116, 1112, 4, 'Samira est top !');
 
 -- --------------------------------------------------------
 
@@ -96,18 +102,21 @@ CREATE TABLE IF NOT EXISTS `profil_conducteur` (
   `doc_assurance` text,
   `doc_carte_grise` text,
   `id_utilisateur` int NOT NULL,
+  `statut_validation` varchar(20) NOT NULL DEFAULT 'en_attente',
   PRIMARY KEY (`id_profil`),
   UNIQUE KEY `id_profil` (`id_profil`),
   UNIQUE KEY `id_utilisateur` (`id_utilisateur`)
-) ENGINE=InnoDB AUTO_INCREMENT=1114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `profil_conducteur`
 --
 
-INSERT INTO `profil_conducteur` (`id_profil`, `date_permis`, `doc_permis`, `doc_assurance`, `doc_carte_grise`, `id_utilisateur`) VALUES
-(1112, '2022-01-11', NULL, NULL, NULL, 1112),
-(1113, '2024-05-02', NULL, NULL, NULL, 1115);
+INSERT INTO `profil_conducteur` (`id_profil`, `date_permis`, `doc_permis`, `doc_assurance`, `doc_carte_grise`, `id_utilisateur`, `statut_validation`) VALUES
+(1112, '2022-01-11', NULL, NULL, NULL, 1112, 'valide'),
+(1113, '2024-05-02', NULL, NULL, NULL, 1115, 'valide'),
+(1114, '2025-03-17', NULL, NULL, NULL, 1116, 'en_attente'),
+(1115, '2023-02-05', NULL, NULL, NULL, 1117, 'valide');
 
 -- --------------------------------------------------------
 
@@ -128,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `reserver` (
   UNIQUE KEY `id_reservation` (`id_reservation`),
   KEY `id_passager` (`id_passager`),
   KEY `id_trajet` (`id_trajet`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `reserver`
@@ -137,7 +146,12 @@ CREATE TABLE IF NOT EXISTS `reserver` (
 INSERT INTO `reserver` (`id_reservation`, `id_passager`, `id_trajet`, `date_resa`, `statut_paiement`, `commission_ua`, `bagages`) VALUES
 (1, 1114, 101, '2026-03-14 21:59:12', 'Payé', 0.25, 0),
 (2, 1115, 101, '2026-03-14 21:59:12', 'Payé', 0.25, 1),
-(3, 1114, 102, '2026-03-14 21:59:12', 'Payé', 0.25, 0);
+(3, 1114, 102, '2026-03-14 21:59:12', 'Payé', 0.25, 0),
+(4, 1112, 104, '2026-03-18 02:49:55', 'Payé', 0.25, 0),
+(5, 1116, 104, '2026-03-18 02:49:55', 'Payé', 0.25, 1),
+(7, 1114, 108, '2026-03-19 00:09:20', 'En attente', 0.25, 0),
+(8, 1115, 108, '2026-03-19 00:14:04', 'En attente', 0.25, 0),
+(9, 1119, 103, '2026-03-19 00:42:45', 'En attente', 0.25, 0);
 
 -- --------------------------------------------------------
 
@@ -161,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `trajet` (
   UNIQUE KEY `id_trajet` (`id_trajet`),
   KEY `id_conducteur` (`id_conducteur`),
   KEY `id_campus_cible` (`id_campus_cible`)
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `trajet`
@@ -171,7 +185,11 @@ INSERT INTO `trajet` (`id_trajet`, `date_heure`, `prix_course`, `places_dispo`, 
 (1, '2026-03-24 14:30:00', 1.00, 1, 1112, '37 Rue Martin Luther King, Le Lamentin 97232', 14.61606000, -61.00224000, 'vers campus', 1),
 (2, '2026-03-24 16:00:00', 3.00, 2, 1115, '73 Rue Schoelcher, Sainte-Luce 97228', 14.46890000, -60.92110000, 'vers campus', 1),
 (101, '2026-02-10 12:00:00', 3.00, 0, 1112, '15 Rue des Bougainvilliers, Fort-de-France 97200', NULL, NULL, 'vers campus', 1),
-(102, '2026-02-15 21:30:00', 2.00, 2, 1115, 'Quartier Acajou, Le Lamentin 97232', NULL, NULL, 'depuis campus', 1);
+(102, '2026-02-15 21:30:00', 2.00, 2, 1115, 'Quartier Acajou, Le Lamentin 97232', NULL, NULL, 'depuis campus', 1),
+(103, '2026-03-24 19:00:00', 3.00, 3, 1117, 'Bourg de Trinité, Trinité 97220', NULL, NULL, 'depuis campus', 1),
+(104, '2026-03-15 16:00:00', 2.00, 1, 1117, 'Centre-ville, Case-Pilote 97222', NULL, NULL, 'depuis campus', 2),
+(105, '2026-03-24 21:00:00', 2.50, 3, 1115, 'Destreland, Baie-Mahault 97122', NULL, NULL, 'depuis campus', 3),
+(108, '2026-03-19 12:30:00', 2.00, 4, 1112, 'Avenue de l’Europe 97222 Case-Pilote', NULL, NULL, 'vers campus', 1);
 
 -- --------------------------------------------------------
 
@@ -192,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   PRIMARY KEY (`id_utilisateur`),
   UNIQUE KEY `id_utilisateur` (`id_utilisateur`),
   UNIQUE KEY `id_sesame` (`id_sesame`)
-) ENGINE=InnoDB AUTO_INCREMENT=1116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `utilisateur`
@@ -202,7 +220,10 @@ INSERT INTO `utilisateur` (`id_utilisateur`, `id_sesame`, `mot_de_passe`, `nom`,
 (1111, 'admin', '$2y$10$G0nwZzlNUqzRLsJ28y9obeLKcdT8T2ej.0KsbDO9qx86jROOv72yC', 'Administrateur1', ' ', 'admin', 10.00, 0.00),
 (1112, 'Samira_V972', '$2y$10$Wc9gZO4Lh1q2cb42/qTpzu.ZfLUKpPxJ6.rj6ETeUKngnRUv15N/q', 'Vilar', 'Samira', 'etudiant', 10.00, 0.00),
 (1114, 'mbessard06', '$2y$10$0EEZKr3iG7ijV3rHKwA4FeLybZe3.1rTmd6LZDauz.vbO2U06u0QC', 'Bessard', 'Melody', 'etudiant', 15.00, 0.00),
-(1115, 'falie06', '$2y$10$mqCa7TBc9CQ2521W/V6TpeRRHYvySWuVdMYloUR9gTRfPP5BSPSNW', 'Alie', 'Flavy', 'etudiant', 20.00, 0.00);
+(1115, 'falie06', '$2y$10$mqCa7TBc9CQ2521W/V6TpeRRHYvySWuVdMYloUR9gTRfPP5BSPSNW', 'Alie', 'Flavy', 'etudiant', 20.00, 0.00),
+(1116, 'arene06', '$2y$10$smMmmDYOqeil0CHJlyWkqeC2qqUoJZ7ZTZA9VsmrsLrKeelg5YKn6', 'Rene', 'Angelina', 'etudiant', 10.00, 0.00),
+(1117, 'edalin06', '$2y$10$OEeeRIDARUlxU0ycNh6/nuNXK7PQZc7CgHLyEe8wmxNxdBp7vUcWO', 'Dalin', 'Evann', 'etudiant', 10.00, 0.00),
+(1119, 'adevonin09', '$2y$10$XMS5ToH7pXo.BBRpLaoSgORT1qoJ4bZKKz3.Zs8B7VzqOCrZ.ed/2', 'Devonin', 'Aude', 'etudiant', 10.00, 0.00);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
