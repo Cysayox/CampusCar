@@ -12,16 +12,26 @@ class TrajetController {
         $trajetModel = new TrajetModel();
         $mes_trajets = $trajetModel->getMesTrajets($_SESSION['user_id']);
         
-        $maintenant = new DateTime();
+        $maintenant = time();
+        
+        $trajets_en_cours = [];
         $trajets_a_venir = [];
         $trajets_passes = [];
 
-        // On trie les trajets en PHP pour séparer "À venir" et "Passés"
+        // On trie les trajets en 3 catégories
         foreach ($mes_trajets as $t) {
-            $date_trajet = new DateTime($t['date_heure']);
-            if ($date_trajet >= $maintenant) {
+            $timestamp_trajet = strtotime($t['date_heure']);
+            
+            // Si le trajet a commencé il y a moins de 4 heures (4 * 3600 secondes) = EN COURS
+            if ($timestamp_trajet <= $maintenant && $timestamp_trajet >= ($maintenant - 4 * 3600)) {
+                $trajets_en_cours[] = $t;
+            } 
+            // S'il est dans le futur = À VENIR
+            elseif ($timestamp_trajet > $maintenant) {
                 $trajets_a_venir[] = $t;
-            } else {
+            } 
+            // S'il date de plus de 4 heures = PASSÉ
+            else {
                 $trajets_passes[] = $t;
             }
         }
@@ -104,6 +114,12 @@ class TrajetController {
         $passagers_list = [];
         if ($trajet['is_driver']) {
             $passagers_list = $trajetModel->getPassagersTrajet($id_trajet);
+        }
+
+        // --- NOUVEAU : Récupération des évaluations reçues si le trajet est passé ---
+        $evaluations_recues = [];
+        if (strtotime($trajet['date_heure']) < time()) {
+            $evaluations_recues = $trajetModel->getEvaluationsPourTrajet($id_trajet, $_SESSION['user_id']);
         }
 
         // 5. On affiche la vue
@@ -245,6 +261,29 @@ class TrajetController {
         
         // On redirige vers l'historique de ses trajets
         header('Location: index.php?action=mes_trajets');
+        exit();
+    }
+
+    // --------------------------------------------------------------
+    // --- LOGIQUE POUR ÉVALUER UN TRAJET (CONDUCTEUR & PASSAGER) ---
+    // --------------------------------------------------------------
+    public function processEvaluerTrajet() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        $id_trajet = $_POST['id_trajet'] ?? null;
+        $id_evalue = $_POST['id_evalue'] ?? null; 
+        $note = $_POST['note'] ?? 5;
+        $commentaire = trim($_POST['commentaire'] ?? '');
+
+        if ($id_trajet && $id_evalue) {
+            $trajetModel = new TrajetModel();
+            $trajetModel->ajouterEvaluation($id_trajet, $_SESSION['user_id'], $id_evalue, $note, $commentaire);
+        }
+
+        header('Location: index.php?action=trajet_details&id=' . $id_trajet);
         exit();
     }
 }

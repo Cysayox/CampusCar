@@ -237,5 +237,36 @@ class TrajetModel {
         
         return $stmt->execute();
     }
+
+    // --- FONCTION POUR RÉCUPÉRER LES AVIS ---
+    public function getEvaluationsPourTrajet($id_trajet, $id_evalue) {
+        // J'ai ajouté e.id_evaluateur ici pour qu'on puisse vérifier qui a voté
+        $sql = "SELECT e.note_etoiles, e.commentaire, u.prenom, u.nom, e.id_evaluateur 
+                FROM evaluer e
+                JOIN utilisateur u ON e.id_evaluateur = u.id_utilisateur
+                WHERE e.id_trajet = :id_trajet AND e.id_evalue = :id_evalue";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id_trajet' => $id_trajet, ':id_evalue' => $id_evalue]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // --- FONCTION POUR SAUVEGARDER L'AVIS ---
+    public function ajouterEvaluation($id_trajet, $id_evaluateur, $id_evalue, $note_etoiles, $commentaire) {
+        $check = "SELECT id_evaluation FROM evaluer WHERE id_trajet = :id_trajet AND id_evaluateur = :id_evaluateur";
+        $stmtCheck = $this->conn->prepare($check);
+        $stmtCheck->execute([':id_trajet' => $id_trajet, ':id_evaluateur' => $id_evaluateur]);
+        
+        if ($stmtCheck->rowCount() > 0) { return false; } // Déjà voté
+
+        $sql = "INSERT INTO evaluer (id_trajet, id_evaluateur, id_evalue, note_etoiles, commentaire) 
+                VALUES (:id_trajet, :id_evaluateur, :id_evalue, :note_etoiles, :commentaire)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':id_trajet' => $id_trajet, ':id_evaluateur' => $id_evaluateur,
+            ':id_evalue' => $id_evalue, ':note_etoiles' => $note_etoiles, ':commentaire' => $commentaire
+        ]);
+    }
 }
 ?>

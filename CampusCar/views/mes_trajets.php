@@ -26,6 +26,13 @@
     .role-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
     .role-conducteur { background-color: rgba(72, 61, 139, 0.15); color: darkslateblue; }
     .role-passager { background-color: rgba(0, 175, 245, 0.15); color: var(--bbc-bleu-vif); }
+
+    /* Animation pour le point vert clignotant */
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(30, 142, 62, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(30, 142, 62, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(30, 142, 62, 0); }
+    }
 </style>
 
 <main class="page-container">
@@ -36,7 +43,19 @@
             <option value="passes">Historique (Passés)</option>
         </select>
     </div>
-
+    
+    <?php if (!empty($trajets_en_cours)): ?>
+        <div style="background-color: rgba(30, 142, 62, 0.1); border: 2px solid #1e8e3e; border-radius: 16px; padding: 20px; margin-bottom: 30px;">
+            <h3 style="color: #1e8e3e; margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <span style="display:inline-block; width:12px; height:12px; background-color:#1e8e3e; border-radius:50%; animation: pulse 1.5s infinite;"></span>
+                Trajet en cours
+            </h3>
+            
+            <?php foreach ($trajets_en_cours as $t): ?>
+                <?php renderTripCard($t); ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
     <div id="liste-avenir">
         <?php if (empty($trajets_a_venir)): ?>
             <div style="text-align:center; padding: 40px; color: gray;">Vous n'avez aucun trajet prévu.</div>
@@ -75,10 +94,8 @@ function renderTripCard($t) {
     
     $card_class = $is_conducteur ? 'is-driver-card' : 'is-passenger-card';
 
-    // --- NOUVEAU : Calcul du Départ et de l'Arrivée ---
     if ($t['sens_trajet'] === 'vers campus') {
         $adresse_parts = explode(',', $t['adresse_exterieure']);
-        // On nettoie le code postal pour ne garder que la ville
         $depart = trim(preg_replace('/\s[0-9]{5}/', '', $adresse_parts[1] ?? $adresse_parts[0]));
         $arrivee = $t['nom_campus'];
     } else {
