@@ -23,7 +23,7 @@
             
             <div class="input-group" id="bloc-adresse" style="flex: 2.5; position: relative;">
                 <label id="label-adresse">Départ</label>
-                <input type="text" id="input-adresse" name="adresse" placeholder="Ex: Fort-de-France, Lamentin..." required autocomplete="off" value="<?= htmlspecialchars($adresse ?? '') ?>">
+                <input type="text" id="input-adresse" name="adresse" placeholder="Ex: Fort-de-France, Lamentin..." required autocomplete="off" value="<?= htmlspecialchars($_GET['adresse'] ?? '') ?>">
                 
                 <div id="suggestions-adresse" class="custom-dropdown"></div>
             </div>
@@ -39,7 +39,7 @@
                     if (!empty($liste_campus)): 
                         foreach ($liste_campus as $c): 
                     ?>
-                        <option value="<?= htmlspecialchars($c['id_campus']) ?>" <?= (isset($id_campus) && $id_campus == $c['id_campus']) ? 'selected' : '' ?>>
+                        <option value="<?= htmlspecialchars($c['id_campus']) ?>" <?= (isset($_GET['campus']) && $_GET['campus'] == $c['id_campus']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($c['nom_campus']) ?> (<?= htmlspecialchars($c['pole_geographique']) ?>)
                         </option>
                     <?php 
@@ -52,17 +52,17 @@
 
             <div class="input-group">
                 <label>Aller</label>
-                <input type="date" name="jour_aller" value="<?= htmlspecialchars($date_trajet ?? date('Y-m-d')) ?>" required>
+                <input type="date" name="jour_aller" value="<?= htmlspecialchars($_GET['jour_aller'] ?? date('Y-m-d')) ?>" required>
             </div>
 
             <div class="input-group">
                 <label>Retour <span style="font-weight: normal; font-size: 10px; color: #888;">(Optionnel)</span></label>
-                <input type="date" name="jour_retour">
+                <input type="date" name="jour_retour" value="<?= htmlspecialchars($_GET['jour_retour'] ?? '') ?>">
             </div>
 
             <div class="input-group" style="flex: 0 0 90px; border-right: none;">
                 <label>Passager(s)</label>
-                <input type="number" name="passagers" min="1" max="4" value="1">
+                <input type="number" name="passagers" min="1" max="4" value="<?= htmlspecialchars($_GET['passagers'] ?? 1) ?>">
             </div>
 
             <button type="submit" class="btn-submit">Rechercher</button>
