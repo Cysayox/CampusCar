@@ -3,19 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 19 mars 2026 à 01:12
+-- Généré le : jeu. 19 mars 2026 à 13:15
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Base de données : `campuscar`
@@ -63,30 +57,25 @@ CREATE TABLE IF NOT EXISTS `evaluer` (
   `id_evaluation` int NOT NULL AUTO_INCREMENT,
   `id_trajet` int NOT NULL,
   `id_evaluateur` int NOT NULL,
-  `id_evalue` int NOT NULL,
   `note_etoiles` int DEFAULT NULL,
   `commentaire` text,
   PRIMARY KEY (`id_evaluation`),
   UNIQUE KEY `id_evaluation` (`id_evaluation`),
   KEY `id_trajet` (`id_trajet`),
-  KEY `id_evaluateur` (`id_evaluateur`),
-  KEY `id_evalue` (`id_evalue`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `id_evaluateur` (`id_evaluateur`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `evaluer`
 --
 
-INSERT INTO `evaluer` (`id_evaluation`, `id_trajet`, `id_evaluateur`, `id_evalue`, `note_etoiles`, `commentaire`) VALUES
-(1, 101, 1114, 1112, 5, 'Conduite au top, Samira est très ponctuelle !'),
-(2, 101, 1115, 1112, 4, 'Super trajet, bonne musique.'),
-(3, 102, 1114, 1115, 5, 'Merci de m\'avoir déposée si près de chez moi Flavy !'),
-(4, 104, 1112, 1117, 5, 'Super conducteur, ponctuel et voiture très propre !'),
-(5, 104, 1116, 1117, 5, 'Bon trajet, Evann conduit bien et est très prudent.'),
-(6, 104, 1117, 1112, 5, 'Samira est une super passagère, très ponctuelle.'),
-(7, 104, 1117, 1116, 3, ''),
-(8, 104, 1112, 1116, 5, 'Compagnie très agréable à l\'arrière.'),
-(9, 104, 1116, 1112, 4, 'Samira est top !');
+INSERT INTO `evaluer` (`id_evaluation`, `id_trajet`, `id_evaluateur`, `note_etoiles`, `commentaire`) VALUES
+(1, 101, 1114, 5, 'Conduite au top, trajet super agréable et très ponctuel !'),
+(2, 101, 1115, 4, 'Super trajet, bonne musique et ambiance cool.'),
+(3, 102, 1114, 5, 'Trajet parfait, on m\'a déposée tout près de chez moi, merci !'),
+(4, 104, 1112, 5, 'Super ambiance à bord, départ ponctuel et voiture très propre !'),
+(5, 104, 1116, 5, 'Très bon trajet, conduite prudente et compagnie au top.'),
+(6, 104, 1117, 4, 'Trajet très sympa, tout le monde était à l\'heure au point de rendez-vous.');
 
 -- --------------------------------------------------------
 
@@ -137,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `reserver` (
   UNIQUE KEY `id_reservation` (`id_reservation`),
   KEY `id_passager` (`id_passager`),
   KEY `id_trajet` (`id_trajet`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `reserver`
@@ -151,7 +140,8 @@ INSERT INTO `reserver` (`id_reservation`, `id_passager`, `id_trajet`, `date_resa
 (5, 1116, 104, '2026-03-18 02:49:55', 'Payé', 0.25, 1),
 (7, 1114, 108, '2026-03-19 00:09:20', 'En attente', 0.25, 0),
 (8, 1115, 108, '2026-03-19 00:14:04', 'En attente', 0.25, 0),
-(9, 1119, 103, '2026-03-19 00:42:45', 'En attente', 0.25, 0);
+(9, 1119, 103, '2026-03-19 00:42:45', 'En attente', 0.25, 0),
+(10, 1114, 103, '2026-03-19 02:04:51', 'En attente', 0.25, 0);
 
 -- --------------------------------------------------------
 
@@ -225,7 +215,3 @@ INSERT INTO `utilisateur` (`id_utilisateur`, `id_sesame`, `mot_de_passe`, `nom`,
 (1117, 'edalin06', '$2y$10$OEeeRIDARUlxU0ycNh6/nuNXK7PQZc7CgHLyEe8wmxNxdBp7vUcWO', 'Dalin', 'Evann', 'etudiant', 10.00, 0.00),
 (1119, 'adevonin09', '$2y$10$XMS5ToH7pXo.BBRpLaoSgORT1qoJ4bZKKz3.Zs8B7VzqOCrZ.ed/2', 'Devonin', 'Aude', 'etudiant', 10.00, 0.00);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

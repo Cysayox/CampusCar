@@ -69,10 +69,20 @@ class UserModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Calcule la moyenne des notes reçues (la méthode la plus simple via SQL)
+    // Calcule la réputation d'un utilisateur (moyenne des notes sur ses trajets, hors ses propres avis)
     public function getMoyenneNotes($id_utilisateur) {
-        $query = "SELECT AVG(note_etoiles) as moyenne, COUNT(note_etoiles) as total_avis 
-                  FROM evaluer WHERE id_evalue = :id";
+        $query = "SELECT AVG(e.note_etoiles) as moyenne, COUNT(e.note_etoiles) as total_avis 
+                  FROM evaluer e
+                  WHERE e.id_trajet IN (
+                      -- On récupère tous les trajets où l'utilisateur était soit conducteur...
+                      SELECT id_trajet FROM trajet WHERE id_conducteur = :id
+                      UNION
+                      -- ...soit passager
+                      SELECT id_trajet FROM reserver WHERE id_passager = :id
+                  ) 
+                  -- Et on exclut les notes que l'utilisateur s'est auto-attribuées
+                  AND e.id_evaluateur != :id";
+        
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id_utilisateur, PDO::PARAM_INT);
         $stmt->execute();

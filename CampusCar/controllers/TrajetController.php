@@ -110,16 +110,14 @@ class TrajetController {
             exit();
         }
 
-        // --- NOUVEAU : Récupération des passagers si c'est le conducteur ---
-        $passagers_list = [];
-        if ($trajet['is_driver']) {
-            $passagers_list = $trajetModel->getPassagersTrajet($id_trajet);
-        }
+        // On récupère la liste des passagers pour TOUT LE MONDE (Conducteur ET Passagers)
+        // C'est nécessaire pour l'affichage ET pour le système d'évaluation mutuelle !
+        $passagers_list = $trajetModel->getPassagersTrajet($id_trajet);
 
         // --- NOUVEAU : Récupération des évaluations reçues si le trajet est passé ---
         $evaluations_recues = [];
         if (strtotime($trajet['date_heure']) < time()) {
-            $evaluations_recues = $trajetModel->getEvaluationsPourTrajet($id_trajet, $_SESSION['user_id']);
+            $evaluations_recues = $trajetModel->getEvaluationsPourTrajet($id_trajet);
         }
 
         // 5. On affiche la vue
@@ -274,13 +272,12 @@ class TrajetController {
         }
 
         $id_trajet = $_POST['id_trajet'] ?? null;
-        $id_evalue = $_POST['id_evalue'] ?? null; 
         $note = $_POST['note'] ?? 5;
         $commentaire = trim($_POST['commentaire'] ?? '');
 
-        if ($id_trajet && $id_evalue) {
+        if ($id_trajet) {
             $trajetModel = new TrajetModel();
-            $trajetModel->ajouterEvaluation($id_trajet, $_SESSION['user_id'], $id_evalue, $note, $commentaire);
+            $trajetModel->ajouterEvaluation($id_trajet, $_SESSION['user_id'], $note, $commentaire);
         }
 
         header('Location: index.php?action=trajet_details&id=' . $id_trajet);

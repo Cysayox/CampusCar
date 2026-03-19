@@ -57,21 +57,7 @@
     .rating-css label:hover, .rating-css label:hover ~ label, .rating-css input:checked ~ label { color: #f5b000; }
     .eval-textarea { width: 100%; padding: 12px; border: 1px solid var(--bordure); border-radius: 8px; resize: vertical; min-height: 80px; margin-bottom: 15px; font-family: inherit;}
     .eval-textarea:focus { outline: none; border-color: #f5b000; }
-    /* CSS pour la liste déroulante des participants */
-    .eval-select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid var(--bordure);
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 15px;
-        color: var(--bbc-fonce);
-        background-color: var(--blanc);
-        cursor: pointer;
-    }
-    .eval-select:focus { outline: none; border-color: #f5b000; }
-
+    
     /* Le textarea réduit comme demandé */
     .eval-textarea { 
         width: 100%; 
@@ -164,7 +150,7 @@
                 <strong>Places occupées :</strong> <?= $trajet['nb_passagers'] ?> sur <?= $trajet['places_dispo'] ?>
             </div>
 
-            <?php if ($trajet['is_driver'] && $trajet['nb_passagers'] > 0): ?>
+            <?php if ($trajet['nb_passagers'] > 0): ?>
                 <div class="passenger-list">
                     <strong style="display: block; margin-bottom: 10px; color: var(--bbc-fonce);">Passagers inscrits :</strong>
                     <?php foreach ($passagers_list as $p): ?>
@@ -210,49 +196,22 @@
                     <?php if ($trajet['is_passenger'] || $trajet['is_driver']): ?>
                         
                         <?php
-                        // 1. On liste TOUTES les personnes qu'on peut évaluer
-                        $personnes_a_evaluer = [];
-                        
-                        if ($_SESSION['user_id'] != $trajet['id_conducteur']) {
-                            $personnes_a_evaluer[$trajet['id_conducteur']] = $trajet['conducteur_prenom'] . ' ' . $trajet['conducteur_nom'] . ' (Conducteur)';
-                        }
-                        
-                        // J'ajoute tous les passagers (sauf moi-même)
-                        if (!empty($passagers_list)) {
-                            foreach ($passagers_list as $p) {
-                                // On vérifie le nom de la colonne utilisée par le collègue
-                                $id_passager = $p['id_utilisateur'] ?? $p['id_passager'] ?? null;
-                                
-                                if ($id_passager && $id_passager != $_SESSION['user_id']) {
-                                    $personnes_a_evaluer[$id_passager] = $p['prenom'] . ' ' . $p['nom'] . ' (Passager)';
-                                }
-                            }
-                        }
-
-                        // 2. On retire ceux qu'on a DÉJÀ évalués
+                        $deja_evalue = false;
                         if (!empty($evaluations_recues)) {
                             foreach ($evaluations_recues as $ev) {
                                 if (isset($ev['id_evaluateur']) && $ev['id_evaluateur'] == $_SESSION['user_id']) {
-                                    if (isset($personnes_a_evaluer[$ev['id_evalue']])) {
-                                        unset($personnes_a_evaluer[$ev['id_evalue']]);
-                                    }
+                                    $deja_evalue = true;
+                                    break;
                                 }
                             }
                         }
                         ?>
                         
-                        <?php if (count($personnes_a_evaluer) > 0): ?>
+                        <?php if (!$deja_evalue): ?>
                             <div class="eval-box">
-                                <h4 style="margin-top: 0; margin-bottom: 10px; color: var(--bbc-fonce);">⭐ Évaluer un participant</h4>
+                                <h4 style="margin-top: 0; margin-bottom: 10px; color: var(--bbc-fonce);">⭐ Évaluer ce trajet</h4>
                                 <form action="index.php?action=process_evaluer_trajet" method="POST">
                                     <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
-                                    
-                                    <select name="id_evalue" class="eval-select" required>
-                                        <option value="">Choisissez une personne...</option>
-                                        <?php foreach ($personnes_a_evaluer as $id => $label): ?>
-                                            <option value="<?= $id ?>"><?= htmlspecialchars($label) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
                                     
                                     <div class="rating-css">
                                         <input type="radio" id="star5" name="note" value="5" checked>
@@ -276,10 +235,40 @@
                             </div>
                         <?php else: ?>
                             <div class="action-btn" style="background-color: #eef1f2; color: var(--bbc-fonce); cursor: default; border: 1px solid var(--bordure); margin-top: 10px;">
-                                ✅ Vous avez évalué tous les participants !
+                                ✅ Vous avez déjà évalué ce trajet.
                             </div>
                         <?php endif; ?>
 
+                    <?php endif; ?>
+
+                <?php else: ?>
+
+                    <?php if ($trajet['is_driver']): ?>
+                        
+                        <?php if ($trajet['nb_passagers'] == 0): // On ne peut modifier que s'il n'y a pas de passagers ?>
+                            <a href="index.php?action=modifier_trajet&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-edit">Modifier le trajet</a>
+                        <?php endif; ?>
+                        
+                        <a href="index.php?action=annuler_trajet&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-cancel-resa" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce trajet ? Cette action est irréversible.');">
+                            Annuler le trajet
+                        </a>
+
+                    <?php elseif ($trajet['is_passenger']): ?>
+                        
+                        <a href="index.php?action=annuler_reservation&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-cancel-resa" onclick="return confirm('Êtes-vous sûr de vouloir annuler votre réservation ?');">
+                            Annuler ma réservation
+                        </a>
+
+                    <?php elseif (($trajet['places_dispo'] - $trajet['nb_passagers']) > 0): ?>
+
+                        <a href="index.php?action=reserver&id=<?= $trajet['id_trajet'] ?>" class="action-btn btn-reserve">
+                            Réserver ce trajet (<?= ($trajet['places_dispo'] - $trajet['nb_passagers']) ?> places restantes)
+                        </a>
+
+                    <?php else: ?>
+                        <div class="action-btn" style="background-color: #e1e4e8; color: #888; cursor: not-allowed;">
+                            Trajet complet
+                        </div>
                     <?php endif; ?>
 
                 <?php endif; ?>

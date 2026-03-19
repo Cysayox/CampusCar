@@ -15,8 +15,8 @@ class TrajetModel {
         // On récupère le trajet, le nom du campus, les infos du conducteur
         // ET on calcule sa note moyenne et son nombre d'avis en direct !
         $query = "SELECT t.*, u.prenom, u.nom, c.nom_campus,
-                  (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) AS note_moyenne,
-                  (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) AS nb_avis
+                  (SELECT AVG(note_etoiles) FROM evaluer WHERE id_trajet = t.id_trajet) AS note_moyenne,
+                  (SELECT COUNT(*) FROM evaluer WHERE id_trajet = t.id_trajet) AS nb_avis
                   FROM trajet t
                   JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur
                   JOIN campus c ON t.id_campus_cible = c.id_campus
@@ -35,8 +35,8 @@ class TrajetModel {
         
         // On ajoute les mêmes sous-requêtes ici pour les résultats de recherche
         $sql_select = "SELECT t.*, u.prenom, u.nom, c.nom_campus,
-                       (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) AS note_moyenne,
-                       (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) AS nb_avis";
+                       (SELECT AVG(note_etoiles) FROM evaluer WHERE id_trajet = t.id_trajet) AS note_moyenne,
+                       (SELECT COUNT(*) FROM evaluer WHERE id_trajet = t.id_trajet) AS nb_avis";
         
         $sql_from = " FROM trajet t JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur JOIN campus c ON t.id_campus_cible = c.id_campus";
         $sql_where = " WHERE t.id_campus_cible = :campus AND t.sens_trajet = :sens AND DATE(t.date_heure) = :date_recherche";
@@ -129,8 +129,8 @@ class TrajetModel {
             SELECT t.*, c.nom_campus, c.pole_geographique, 
                    u.prenom as conducteur_prenom, u.nom as conducteur_nom, u.note_moyenne_calc,
                    (SELECT COUNT(*) FROM reserver WHERE id_trajet = t.id_trajet) as nb_passagers,
-                   (SELECT COUNT(*) FROM evaluer WHERE id_evalue = t.id_conducteur) as nb_avis,
-                   (SELECT AVG(note_etoiles) FROM evaluer WHERE id_evalue = t.id_conducteur) as vraie_note
+                   (SELECT COUNT(*) FROM evaluer WHERE id_trajet = t.id_trajet) as nb_avis,
+                   (SELECT AVG(note_etoiles) FROM evaluer WHERE id_trajet = t.id_trajet) as vraie_note
             FROM trajet t
             JOIN campus c ON t.id_campus_cible = c.id_campus
             JOIN utilisateur u ON t.id_conducteur = u.id_utilisateur
@@ -239,33 +239,35 @@ class TrajetModel {
     }
 
     // --- FONCTION POUR RÉCUPÉRER LES AVIS ---
-    public function getEvaluationsPourTrajet($id_trajet, $id_evalue) {
-        // J'ai ajouté e.id_evaluateur ici pour qu'on puisse vérifier qui a voté
-        $sql = "SELECT e.note_etoiles, e.commentaire, u.prenom, u.nom, e.id_evaluateur 
-                FROM evaluer e
-                JOIN utilisateur u ON e.id_evaluateur = u.id_utilisateur
-                WHERE e.id_trajet = :id_trajet AND e.id_evalue = :id_evalue";
+    public function getEvaluationsPourTrajet($id_trajet) {
+        // Modifié : On récupère TOUTES les évaluations pour le trajet, sans filtre sur l'évalué ou l'évaluateur
+        $sql = "SELECT e.*, u.prenom, u.nom 
+                FROM evaluer e 
+                JOIN utilisateur u ON e.id_evaluateur = u.id_utilisateur 
+                WHERE e.id_trajet = :id_trajet";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':id_trajet' => $id_trajet, ':id_evalue' => $id_evalue]);
+        $stmt->execute([':id_trajet' => $id_trajet]);
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // --- FONCTION POUR SAUVEGARDER L'AVIS ---
-    public function ajouterEvaluation($id_trajet, $id_evaluateur, $id_evalue, $note_etoiles, $commentaire) {
+    public function ajouterEvaluation($id_trajet, $id_evaluateur, $note_etoiles, $commentaire) {
         $check = "SELECT id_evaluation FROM evaluer WHERE id_trajet = :id_trajet AND id_evaluateur = :id_evaluateur";
         $stmtCheck = $this->conn->prepare($check);
         $stmtCheck->execute([':id_trajet' => $id_trajet, ':id_evaluateur' => $id_evaluateur]);
         
         if ($stmtCheck->rowCount() > 0) { return false; } // Déjà voté
 
-        $sql = "INSERT INTO evaluer (id_trajet, id_evaluateur, id_evalue, note_etoiles, commentaire) 
-                VALUES (:id_trajet, :id_evaluateur, :id_evalue, :note_etoiles, :commentaire)";
+        $sql = "INSERT INTO evaluer (id_trajet, id_evaluateur, note_etoiles, commentaire) 
+                VALUES (:id_trajet, :id_evaluateur, :note_etoiles, :commentaire)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
-            ':id_trajet' => $id_trajet, ':id_evaluateur' => $id_evaluateur,
-            ':id_evalue' => $id_evalue, ':note_etoiles' => $note_etoiles, ':commentaire' => $commentaire
+            ':id_trajet' => $id_trajet,
+            ':id_evaluateur' => $id_evaluateur,
+            ':note_etoiles' => $note_etoiles,
+            ':commentaire' => $commentaire
         ]);
     }
 }
