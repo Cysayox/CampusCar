@@ -110,6 +110,17 @@ switch ($action) {
         $controller = new TrajetController();
         $controller->processModifierTrajet();
         break;
+
+    case 'reserver':
+        $controller = new TrajetController();
+        $controller->processReserver();
+        break;
+
+    case 'annuler_reservation':
+        $controller = new TrajetController();
+        $controller->processAnnulerReservation();
+        break;
+    
     // --- ROUTES ADMINISTRATION ---
     case 'admin_dashboard':
         require_once __DIR__ . '/controllers/AdminController.php';
