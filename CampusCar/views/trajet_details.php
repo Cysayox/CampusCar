@@ -3,13 +3,28 @@
 <style>
     .details-container {
         max-width: 1000px;
-        margin: 40px auto;
+        margin: 40px auto; /* On remet la marge normale */
         background: var(--blanc);
         border-radius: 16px;
         box-shadow: 0 4px 16px rgba(0,0,0,0.08);
         border: 1px solid var(--bordure);
         display: flex; 
         overflow: hidden;
+    }
+
+    /* --- LE BOUTON RETOUR INTÉGRÉ --- */
+    .back-link {
+        display: inline-block;
+        margin-bottom: 25px; /* Pousse le contenu vers le bas */
+        color: var(--bbc-bleu-vif);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+        transition: color 0.2s;
+    }
+    .back-link:hover {
+        color: var(--bbc-fonce);
+        text-decoration: underline;
     }
 
     .details-left { flex: 2; padding: 40px; border-right: 1px solid var(--bordure); }
@@ -42,6 +57,8 @@
         
         <div class="details-left">
             
+            <a href="javascript:history.back()" class="back-link">← Retour</a><br>
+
             <?php if ($trajet['is_driver']): ?>
                 <div class="status-badge" style="background-color: rgba(72, 61, 139, 0.15); color: darkslateblue;">
                     🚗 C'est votre annonce
