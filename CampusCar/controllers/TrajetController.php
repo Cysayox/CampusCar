@@ -196,5 +196,56 @@ class TrajetController {
         header('Location: index.php?action=trajet_details&id=' . $id_trajet);
         exit();
     }
+    // --------------------------------------------------------
+    // --- LOGIQUE POUR RÉSERVER UN TRAJET (PASSAGER) ---
+    // --------------------------------------------------------
+    public function processReserver() {
+        // 1. L'utilisateur doit être connecté pour réserver
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        $id_trajet = $_GET['id'] ?? null;
+        if ($id_trajet) {
+            $trajetModel = new TrajetModel();
+            
+            // Sécurité : on vérifie que le trajet existe et qu'il reste de la place
+            $trajet = $trajetModel->getTrajetById($id_trajet, $_SESSION['user_id']);
+            
+            if ($trajet && !$trajet['is_driver'] && $trajet['nb_passagers'] < $trajet['places_dispo']) {
+                // On valide la réservation !
+                $trajetModel->reserverTrajet($id_trajet, $_SESSION['user_id']);
+                
+                // (Bonus futur : c'est ici qu'on pourrait déduire le prix du solde_virtuel du passager)
+            }
+        }
+        
+        // On redirige vers la page du trajet pour qu'il voit la mise à jour (bouton vert "Inscrit")
+        header('Location: index.php?action=trajet_details&id=' . $id_trajet);
+        exit();
+    }
+
+    // --------------------------------------------------------
+    // --- LOGIQUE POUR ANNULER SA RÉSERVATION (PASSAGER) ---
+    // --------------------------------------------------------
+    public function processAnnulerReservation() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+
+        $id_trajet = $_GET['id'] ?? null;
+        if ($id_trajet) {
+            $trajetModel = new TrajetModel();
+            $trajetModel->annulerReservation($id_trajet, $_SESSION['user_id']);
+            
+            // (Bonus futur : c'est ici qu'on rembourserait le solde_virtuel du passager)
+        }
+        
+        // On redirige vers l'historique de ses trajets
+        header('Location: index.php?action=mes_trajets');
+        exit();
+    }
 }
 ?>
