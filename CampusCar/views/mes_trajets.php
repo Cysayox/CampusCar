@@ -8,7 +8,7 @@
     
     .trip-card-mes-trajets {
         display: block; 
-        background-color: var(--blanc) !important; /* Force le fond blanc */
+        background-color: var(--blanc) !important; 
         border-radius: 16px; 
         padding: 24px;
         text-decoration: none; 
@@ -20,7 +20,6 @@
     }
     .trip-card-mes-trajets:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
     
-    /* Bandes de couleur SANS modifier le fond */
     .is-driver-card { border-left: 6px solid darkslateblue !important; }
     .is-passenger-card { border-left: 6px solid deepskyblue !important; }
 
@@ -75,24 +74,42 @@ function renderTripCard($t) {
     $is_conducteur = $t['is_mon_trajet_conducteur'] == 1;
     
     $card_class = $is_conducteur ? 'is-driver-card' : 'is-passenger-card';
+
+    // --- NOUVEAU : Calcul du Départ et de l'Arrivée ---
+    if ($t['sens_trajet'] === 'vers campus') {
+        $adresse_parts = explode(',', $t['adresse_exterieure']);
+        // On nettoie le code postal pour ne garder que la ville
+        $depart = trim(preg_replace('/\s[0-9]{5}/', '', $adresse_parts[1] ?? $adresse_parts[0]));
+        $arrivee = $t['nom_campus'];
+    } else {
+        $depart = $t['nom_campus'];
+        $adresse_parts = explode(',', $t['adresse_exterieure']);
+        $arrivee = trim(preg_replace('/\s[0-9]{5}/', '', $adresse_parts[1] ?? $adresse_parts[0]));
+    }
 ?>
     <a href="index.php?action=trajet_details&id=<?= $t['id_trajet'] ?>" class="trip-card-mes-trajets <?= $card_class ?>">
+        
         <span class="role-badge <?= $is_conducteur ? 'role-conducteur' : 'role-passager' ?>">
             <?= $is_conducteur ? 'Volant (Conducteur)' : 'Passager' ?>
         </span>
+        
         <div class="trip-main-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <div style="font-size: 16px;"><strong>📅 <?= $date_format ?></strong> à <?= $heure_format ?></div>
             <div style="font-size: 20px; font-weight: bold;"><?= number_format($t['prix_course'], 2) ?> €</div>
         </div>
+        
         <div style="border-top: 1px solid #ededed; padding-top: 12px; margin-top: 8px; color: #555; display: flex; justify-content: space-between; align-items: center;">
-            <span>🚗 <?= htmlspecialchars($t['nom_campus']) ?></span>
             
-            <span style="font-weight: 500; color: var(--bbc-fonce);">
+            <div style="font-weight: bold; color: var(--bbc-fonce); font-size: 15px;">
+                🚗 <?= htmlspecialchars($depart) ?> <span style="color: deepskyblue; margin: 0 5px;">➔</span> <?= htmlspecialchars($arrivee) ?>
+            </div>
+            
+            <span style="font-weight: 500; color: var(--bbc-fonce); font-size: 14px;">
                 <?php if (!$is_conducteur): ?>
-                    Avec <?= htmlspecialchars($t['conducteur_prenom']) ?> (Conducteur)
+                    Avec <?= htmlspecialchars($t['conducteur_prenom']) ?> (Cond.)
                 <?php else: ?>
                     <?php if ($t['nb_passagers'] == 0): ?>
-                        <span style="color: gray;">En attente de passagers...</span>
+                        <span style="color: gray;">En attente...</span>
                     <?php elseif ($t['nb_passagers'] == 1): ?>
                         Avec <?= htmlspecialchars($t['premier_passager_prenom']) ?>
                     <?php else: ?>
@@ -100,6 +117,7 @@ function renderTripCard($t) {
                     <?php endif; ?>
                 <?php endif; ?>
             </span>
+            
         </div>
     </a>
 <?php } ?>
