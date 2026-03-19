@@ -208,5 +208,34 @@ class TrajetModel {
         $stmt->bindParam(':id_conducteur', $id_conducteur, PDO::PARAM_INT);
         return $stmt->execute();
     }
+    // --- FONCTION POUR RÉSERVER UN TRAJET ---
+    public function reserverTrajet($id_trajet, $id_passager) {
+        // 1. On vérifie qu'il n'est pas déjà inscrit (sécurité)
+        $sql_check = "SELECT id_reservation FROM reserver WHERE id_trajet = :id_trajet AND id_passager = :id_passager";
+        $stmt_check = $this->conn->prepare($sql_check);
+        $stmt_check->execute([':id_trajet' => $id_trajet, ':id_passager' => $id_passager]);
+        
+        if ($stmt_check->rowCount() > 0) {
+            return false; // Déjà réservé
+        }
+
+        // 2. On insère la réservation dans la base de données
+        $sql = "INSERT INTO reserver (id_trajet, id_passager) VALUES (:id_trajet, :id_passager)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->bindParam(':id_passager', $id_passager, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
+
+    // --- FONCTION POUR ANNULER SA RÉSERVATION (PASSAGER) ---
+    public function annulerReservation($id_trajet, $id_passager) {
+        $sql = "DELETE FROM reserver WHERE id_trajet = :id_trajet AND id_passager = :id_passager";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_trajet', $id_trajet, PDO::PARAM_INT);
+        $stmt->bindParam(':id_passager', $id_passager, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
 }
 ?>
